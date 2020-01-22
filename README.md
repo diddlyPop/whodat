@@ -9,6 +9,7 @@ Table of contents
    * [Table of contents](#table-of-contents)
    * [Installation](#installation)
    * [Test](#test)
+   * [Pi Setup](#pi-setup)
 <!--te-->
 
 
@@ -33,4 +34,11 @@ TODO
 Test
 ============
 
-Testing table-of-contents
+Test
+
+Pi Setup
+============
+
+Pi Setup
+
+
