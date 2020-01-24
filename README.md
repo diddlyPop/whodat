@@ -7,6 +7,7 @@ Here's the gist:
 - We will need to train a facial-recognition model with pictures of people we'd like to recognize. 
   - This could be done at time of setup, with pictures of roommates and family members, or we could attempt to train iteratively with photos taken from the Pi. 
   - Hardware constraints may prevent us from training on-device. Due to scope of project we probably should avoid implementing  offloading the training to another device. 
+- Send output from facial-recognition model to user via text-message using the Twilio Python library
 
 <hr>
 
