@@ -17,7 +17,7 @@ Table of contents
 <!--ts-->
    * [Table of contents](#table-of-contents)
    * [Installation](#installation)
-   * [Test](#test)
+   * [Dependencies](#dependencies)
    * [Pi Setup](#pi-setup)
    * [Docs](#docs)
       * [Pi Hardware](#pi-hardware)
