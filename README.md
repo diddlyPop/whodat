@@ -42,9 +42,11 @@ Windows
 TODO
 ```
 
-Test
+Dependencies
 ============
-Test
+* twilio [![Build Status](https://secure.travis-ci.org/twilio/twilio-python.png?branch=master)](https://travis-ci.org/twilio/twilio-python)
+[![PyPI](https://img.shields.io/pypi/v/twilio.svg)](https://pypi.python.org/pypi/twilio)
+[![PyPI](https://img.shields.io/pypi/pyversions/twilio.svg)](https://pypi.python.org/pypi/twilio)
 
 
 Pi Setup
