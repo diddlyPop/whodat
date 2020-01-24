@@ -48,6 +48,9 @@ Dependencies
 * twilio [![Build Status](https://secure.travis-ci.org/twilio/twilio-python.png?branch=master)](https://travis-ci.org/twilio/twilio-python)
 [![PyPI](https://img.shields.io/pypi/v/twilio.svg)](https://pypi.python.org/pypi/twilio)
 [![PyPI](https://img.shields.io/pypi/pyversions/twilio.svg)](https://pypi.python.org/pypi/twilio)
+  * Don't forget that you should never commit your API key for twilio. Use the environment varibles:
+  `TWILIO_ACCOUNT_SID`
+  `TWILIO_AUTH_TOKEN` 
 
 
 Pi Setup
