@@ -1,6 +1,15 @@
 # whodat
 Get texts from a smart computer that notifies you who is at your door
 
+Here's the gist: 
+- A Raspberry Pi with a camera could be attached to the front of a door, the peephole on the back of the door, or maybe even inside something placed on your doorstep. 
+- The Pi would attempt to scan the faces of those coming up to your door, and will notify you via text who's there. 
+- We will need to train a facial-recognition model with pictures of people we'd like to recognize. 
+  - This could be done at time of setup, with pictures of roommates and family members, or we could attempt to train iteratively with photos taken from the Pi. 
+  - Hardware constraints may prevent us from training on-device. Due to scope of project we probably should avoid implementing  offloading the training to another device. 
+
+<hr>
+
 
 Table of contents
 =================
