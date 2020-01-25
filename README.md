@@ -23,6 +23,7 @@ Table of contents
       * [Pi Hardware](#pi-hardware)
       * [Pi Software](#pi-software)
       * [Image Classifier](#image-classifier)
+      * [GUI](#gui)
 <!--te-->
 
 
@@ -51,6 +52,7 @@ Dependencies
   * Don't forget that you should never commit your API key for twilio. Use the environment varibles:
   `TWILIO_ACCOUNT_SID`
   `TWILIO_AUTH_TOKEN` 
+* PySimpleGui [DOCS](https://pysimplegui.readthedocs.io/en/latest/)
 
 
 Pi Setup
@@ -78,3 +80,7 @@ TODO
 Image Classifier
 ------------
 TODO
+
+GUI
+------------
+PySimpleGui is an awesome and easy-to-use tkinter wrapper. It is great for Raspberry Pi's and simple applications.
