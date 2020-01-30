@@ -1,4 +1,4 @@
-# whodat
+# whodat [![Build Status](https://travis-ci.com/diddlyPop/whodat.svg?branch=master)](https://travis-ci.com/diddlyPop/whodat)
 Get texts from a smart computer that notifies you who is at your door
 
 Here's the gist: 
