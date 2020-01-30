@@ -53,6 +53,7 @@ Dependencies
   `TWILIO_ACCOUNT_SID`
   `TWILIO_AUTH_TOKEN` 
 * PySimpleGui [DOCS](https://pysimplegui.readthedocs.io/en/latest/)
+* pytest [DOCS](https://pysimplegui.readthedocs.io/en/latest/)
 
 
 Pi Setup
