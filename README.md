@@ -24,6 +24,7 @@ Table of contents
       * [Pi Software](#pi-software)
       * [Image Classifier](#image-classifier)
       * [GUI](#gui)
+      * [Continuous Integration](#continuous-integration)
 <!--te-->
 
 
@@ -85,3 +86,7 @@ TODO
 GUI
 ------------
 PySimpleGui is an awesome and easy-to-use tkinter wrapper. It is great for Raspberry Pi's and simple applications.
+
+Continuous Integration
+------------
+Using Travis CI for automatic testing
