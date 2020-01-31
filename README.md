@@ -32,7 +32,18 @@ Installation
 ============
 Linux 
 ```
-TODO
+git clone https://github.com/diddlypop/whodat.git
+cd whodat
+
+//download python3.7.6 or use pyenv (not available in pip / will need to compile from source)
+//    to change global python version to python3.7.6
+
+//activate virtualenv or use pipenv (`pip install pipenv` outside of virtual environment)
+
+pip install -r requirements.txt
+
+//call pytest to run test suite
+pytest
 ```
 
 macOS 
