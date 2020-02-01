@@ -5,7 +5,7 @@ gui App class
 
 class App:
     def __init__(self):
-        self.name = "WHODAT"
+        self.did_load = True
 
     def start(self):
         pass

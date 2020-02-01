@@ -62,7 +62,7 @@ while True:
     try:
         if len(values['-PASSWORD-']) > 10:
             window.Element('-PASSWORD-').Update(values['-PASSWORD-'][:-1])
-    except Exception as e:
+    except TypeError as e:
         print(f"Error caused by PASSWORD hider, {e}")
         # TODO: fix dis
 
