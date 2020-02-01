@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import sys
+
 import PySimpleGUI as sg
 
 # Usage of Tabs in PSG
@@ -45,8 +45,8 @@ window = sg.Window('WhoDat').Layout(layout)
 
 while True:
     event, values = window.Read()
-    #print(len(values['-USER_PASS-']))
-    #print(len(values['-tab_group1-']))
+    # print(len(values['-USER_PASS-']))
+    # print(len(values['-tab_group1-']))
 
     '''
     TODO: Update on key input or tab switch
@@ -65,4 +65,5 @@ while True:
         print('You clicked log in')
     if event is None:           # always, always give a way out!
         break
+
 window.close()
