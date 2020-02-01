@@ -48,7 +48,9 @@ layout = [[sg.TabGroup([[sg.Tab('Setup', setup_layout),
 window = sg.Window('WhoDat').Layout(layout)
 
 while True:
+
     event, values = window.Read()
+
     # print(len(values['-PASSWORD-']))
     # print(len(values['-tab_group1-']))
 
@@ -64,10 +66,6 @@ while True:
             window.Element('-PASSWORD-').Update(values['-PASSWORD-'][:-1])
     except TypeError as e:
         print(f"Error caused by PASSWORD hider, {e}")
-        # TODO: fix dis
-
-    # ----------------------------------------------------------------------
-    # produces runtime error when closing gui "object of type 'NoneType' has no len()"
 
     print(event, values)
 
