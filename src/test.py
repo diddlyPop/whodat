@@ -20,7 +20,7 @@ Train takes a picture and allows you to enter information; verify with sg.Submit
 Test takes a picture, makes a guess and then asks if it is correct using sg.PopupYesNo()
 '''
 train_layout = [[sg.Text('Train your Pi to recognize your friends and family')],
-                [sg.Button('Train', pad=(80,100)), sg.Button('Test')]]
+                [sg.Button('Train', pad=(80, 100)), sg.Button('Test')]]
 
 '''
 TODO: Figure out how to link this to Twilio and authenticate
@@ -34,11 +34,12 @@ twilio_layout = [[sg.Text('Link your Twilio to receive message updates from WhoD
                  [sg.Button('Log in')]]
 
 # TODO: Fill in with information
+# TODO: be concious of duplicating key names, a Button and a Tab with the key 'Train' causes trouble
 about_layout = [[sg.Text('About WhoDat')], [sg.Text('\tINFOMATSION')]]
 
 # This is our predefined layout using our instances from above
 layout = [[sg.TabGroup([[sg.Tab('Setup', setup_layout),
-                         sg.Tab('Train', train_layout),
+                         sg.Tab('Lab', train_layout),
                          sg.Tab('Twilio', twilio_layout),
                          sg.Tab('About', about_layout)]],
                        key='-TAB_GROUP-', tab_location='top', selected_title_color='yellow')]]
@@ -58,9 +59,15 @@ while True:
     '''
     # ---- This is supposed to limit character input for password field ----
     # ---- by reducing the length of input by 1 any time it exceeds 10. ----
-    if len(values['-PASSWORD-']) > 10:
-        window.Element('-PASSWORD-').Update(values['-PASSWORD-'][:-1])
+    try:
+        if len(values['-PASSWORD-']) > 10:
+            window.Element('-PASSWORD-').Update(values['-PASSWORD-'][:-1])
+    except Exception as e:
+        print(f"Error caused by PASSWORD hider, {e}")
+        # TODO: fix dis
+
     # ----------------------------------------------------------------------
+    # produces runtime error when closing gui "object of type 'NoneType' has no len()"
 
     print(event, values)
 
