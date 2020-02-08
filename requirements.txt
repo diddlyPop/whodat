@@ -2,3 +2,4 @@ pipenv==2018.11.26
 PySimpleGUI==4.15.2
 pytest==5.3.5
 twilio==6.35.3
+opencv-python==4.1.2.30
