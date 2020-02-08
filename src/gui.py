@@ -3,7 +3,7 @@ gui App class
 """
 import PySimpleGUI as sg
 import cv2
-from whocam import WhoCam
+from src.whocam import WhoCam
 
 
 class App:
