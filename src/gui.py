@@ -3,6 +3,7 @@ gui App class
 """
 import PySimpleGUI as sg
 import cv2
+from whocam import WhoCam
 
 
 class App:
@@ -52,6 +53,11 @@ class App:
 
     def close(self):
         self.window.close()
+
+    def launchCamera(self):
+        cam = WhoCam(display=False)
+        cam.start()
+        pass
 
 
 if __name__ == '__main__':

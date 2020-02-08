@@ -2,7 +2,7 @@
 
 import PySimpleGUI as sg
 import cv2 as cv
-import os
+
 
 # Usage of Tabs in PSG
 #
