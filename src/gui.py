@@ -2,17 +2,23 @@
 gui App class
 """
 import PySimpleGUI as sg
-import cv2
+# import cv2
 from src.whocam import WhoCam
 
 
 class App:
     def __init__(self):
+        """
+        set up App with all layouts and themes, constructs window at end
+        """
         self.did_load = True
         sg.theme('Dark Amber')
 
         self.setup_layout = [[sg.Text('Configure settings and finalize setup')]]
 
+        # TODO: in lab add a photo frame with temporary photo
+        # TODO: make it a standard photo size so it is easy to convert photos into
+        # TODO: return photo from whocam.takePhoto() into photo frame
         self.lab_layout = [[sg.Text('Train your Pi to recognize your friends and family')],
                            [sg.Button('Train', key='-TRAIN-'), sg.Button('Camera')]]
 
@@ -36,27 +42,46 @@ class App:
                                       sg.Tab('Twilio', self.twilio_layout),
                                       sg.Tab('About', self.about_layout)]],
                                     key='-TAB_GROUP-', tab_location='left', selected_title_color='yellow')]]
-
+        # TODO: increase overall size
         self.window = sg.Window('WhoDat', self.layout, resizable=True)
 
     def start(self):
+        """
+        enter event loop, read window on events
+        TODO: if event is -TESTSHOT-: launchCamera() then take a photo
+        TODO: if event is -TESTVID-: launchCamera() then start video stream
+        TODO: return photo or video stream
+        :return:
+        """
         while True:
 
-            event, values = self.window.Read()
+            event, values = self.window.Read()  # reads when event triggers
 
             if event is None:  # always, always give a way out!
                 break
             elif event is 'Camera':
-                self.launchCamera()
+                self.launchCamera(command="PIC")
             elif event is 'Submit':
                 print('You clicked log in')
 
     def close(self):
+        """
+        close entire application cleanly
+        :return:
+        """
         self.window.close()
 
-    def launchCamera(self):
-        cam = WhoCam(display=False)
-        cam.start()
+    def launchCamera(self, command):
+        """
+        launches camera class
+        keys: `display` and `twilio`
+        :return:
+        """
+        cam = WhoCam(display=True)
+        if command == "PIC":
+            cam.takePhoto()
+        elif command == "VID":
+            cam.takeVideo()
         pass
 
 
