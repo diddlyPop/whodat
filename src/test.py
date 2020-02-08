@@ -10,6 +10,27 @@ import os
 #         element_background_color='cornsilk2',
 #         input_elements_background_color='cornsilk2')
 
+
+def launchCamera():
+    cap = cv.VideoCapture(0)
+
+    while (True):
+        # Capture frame-by-frame
+        ret, frame = cap.read()
+
+        # Our operations on the frame come here
+        gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
+
+        # Display the resulting frame
+        cv.imshow('frame', gray)
+        if cv.waitKey(1) & 0xFF == ord('q'):
+            break
+
+    # When everything done, release the capture
+    cap.release()
+    cv.destroyAllWindows()
+
+
 # Color theme
 sg.theme('Dark Amber')
 
@@ -22,7 +43,7 @@ Train takes a picture and allows you to enter information; verify with sg.Submit
 Test takes a picture, makes a guess and then asks if it is correct using sg.PopupYesNo()
 '''
 lab_layout = [[sg.Text('Train your Pi to recognize your friends and family')], [sg.Image(filename='', key='image')],
-                [sg.Button('Train', key='-TRAIN-'), sg.Button('Test')]]
+              [sg.Button('Train', key='-TRAIN-'), sg.Button('Test')]]
 
 '''
 TODO: Figure out how to link this to Twilio and authenticate
@@ -46,7 +67,7 @@ about_layout = [[sg.Text('About WhoDat')], [sg.Text('\tWhoDat was designed by a 
                                                     '\tupload images using the \'Lab\' tab and test it out!\n')]]
 
 # This is our predefined layout using our instances from above
-layout = [[sg.Image('src/WHODAT_Title3.png', key='-TITLE_IMAGE-'),
+layout = [[sg.Image('WHODAT_Title3.png', key='-TITLE_IMAGE-'),
            sg.TabGroup([[sg.Tab('Setup', setup_layout),
                          sg.Tab(' Lab  ', lab_layout, key='-LAB-'),
                          sg.Tab('Twilio', twilio_layout),
@@ -54,7 +75,8 @@ layout = [[sg.Image('src/WHODAT_Title3.png', key='-TITLE_IMAGE-'),
                        key='-TAB_GROUP-', tab_location='left', selected_title_color='yellow')]]
 
 # This is the window generated sg.Window(Title of the window, our predefined layout)
-window, cap = sg.Window('WhoDat', layout, resizable=True), cv.VideoCapture(0)
+window = sg.Window('WhoDat', layout, resizable=True)
+
 
 while True:
 
@@ -78,14 +100,11 @@ while True:
 
     print(event, values)
 
-    if window['-LAB-']:
-        while window(timeout=20)[0] is not None:
-            window['image'](data=cv.imencode('.png', cap.read()[1])[1].tobytes())
-
     if event is 'Log in':
         print('You clicked log in')
-    if event is None:           # always, always give a way out!
+    if event is 'Test':
+        launchCamera()
+    if event is None:  # always, always give a way out!
         break
 
 window.close()
-

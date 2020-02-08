@@ -9,14 +9,18 @@ class App:
     def __init__(self):
         self.did_load = True
         sg.theme('Dark Amber')
+
         self.setup_layout = [[sg.Text('Configure settings and finalize setup')]]
+
         self.lab_layout = [[sg.Text('Train your Pi to recognize your friends and family')],
-                           [sg.Button('Train', key='-TRAIN-'), sg.Button('Test')]]
+                           [sg.Button('Train', key='-TRAIN-'), sg.Button('Camera')]]
+
         self.twilio_layout = [[sg.Text('Link your Twilio to receive message updates from WhoDat')],
                               [sg.Text('Log in\t'), sg.Input(key='-USERNAME-')],
-                              [sg.Text('Password'), sg.Input(password_char="*", key='-PASSWORD-')],
-                              [sg.Text('API Key'), sg.Input(key='-API_KEY-')],
-                              [sg.Button('Log in')]]
+                              [sg.Text('Password\t'), sg.Input(password_char="*", key='-PASSWORD-')],
+                              [sg.Text('API Key\t'), sg.Input(key='-API_KEY-')],
+                              [sg.Button('Submit')]]
+
         self.about_layout = [[sg.Text('About WhoDat')],
                              [sg.Text('\tWhoDat was designed by a group of 6 students to\n'
                                       '\tpractice machine learning with python, the use of\n'
@@ -31,6 +35,7 @@ class App:
                                       sg.Tab('Twilio', self.twilio_layout),
                                       sg.Tab('About', self.about_layout)]],
                                     key='-TAB_GROUP-', tab_location='left', selected_title_color='yellow')]]
+
         self.window = sg.Window('WhoDat', self.layout, resizable=True)
 
     def start(self):
@@ -38,11 +43,12 @@ class App:
 
             event, values = self.window.Read()
 
-            if event is 'Log in':
-                print('You clicked log in')
-
             if event is None:  # always, always give a way out!
                 break
+            elif event is 'Camera':
+                self.launchCamera()
+            elif event is 'Submit':
+                print('You clicked log in')
 
     def close(self):
         self.window.close()
