@@ -2,6 +2,8 @@
 camera WhoCam class
 """
 # import cv2
+import PIL
+from PIL import Image, ImageTk
 
 
 class WhoCam:
@@ -17,13 +19,24 @@ class WhoCam:
         print("Starting video stream")
         input("Press Enter to continue")
 
-    def takePhoto(self):
-        print("Took a photo")
         if self.display:
             print("Showing photo")
             # Wait until key press or closee window
         else:
             print("Not showing photos rn")
+
+    def takePhoto(self):
+        img = Image.open("pie.jpg")
+        print("Took a photo")
+        # img.thumnnail(320, 320)
+        #
+        if self.display:
+            print("Showing photo")
+            # Wait until key press or closee window
+        else:
+            print("Not showing photos rn")
+
+        return img
 
     def close(self):
         pass

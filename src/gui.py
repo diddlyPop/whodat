@@ -4,6 +4,8 @@ gui App class
 import PySimpleGUI as sg
 # import cv2
 from src.whocam import WhoCam
+import PIL
+from PIL import Image, ImageTk
 
 
 class App:
@@ -13,7 +15,8 @@ class App:
         """
         self.did_load = True
         sg.theme('Dark Amber')
-
+        self.camera_active = False
+        self.PIC_FRAME_SIZE = (200, 180)
         self.setup_layout = [[sg.Text('Configure settings and finalize setup')]]
 
         # TODO: in lab add a photo frame with temporary photo
@@ -21,12 +24,13 @@ class App:
         # TODO: return photo from whocam.takePhoto() into photo frame
         self.lab_layout = [[sg.Text('Train your Pi to recognize your friends and family')],
                            [sg.Button('Train', key='-TRAIN-'), sg.Button('Camera')],
-                           [sg.InputText(), sg.FileBrowse()],
-                           [sg.InputText(), sg.Button("Label")]]
+                           [sg.InputText(), sg.FileBrowse(), sg.Button('Load')],
+                           [sg.InputText(), sg.Button("Label")],
+                           [sg.Image('WHODAT_Title3.png', key='-PICTUREFRAME-', size=self.PIC_FRAME_SIZE)]]
 
         self.twilio_layout = [[sg.Text('Link your Twilio to receive message updates from WhoDat')],
                               [sg.Text('Log in\t'), sg.Input(key='-USERNAME-')],
-                              [sg.Text('Password\t'), sg.Input(password_char="*", key='-PASSWORD-')],
+                              [sg.Text('Password'), sg.Input(password_char="*", key='-PASSWORD-')],
                               [sg.Text('API Key\t'), sg.Input(key='-API_KEY-')],
                               [sg.Button('Submit')]]
 
@@ -61,12 +65,18 @@ class App:
 
             if event is None:  # always, always give a way out!
                 break
+            elif event is 'Load':
+                if values["Browse"]:
+                    image_file = Image.open(values["Browse"])
+                    self.convertSizeAndTypeThenUpdate(image_file)
+                else:
+                    print("No file selected")
             elif event is 'Camera':
-                self.launchCamera("laptop")     # also could take `pi` or `test`
+                self.launchCameraTakePhoto("laptop")     # also could take `pi` or `test`
             elif event is 'Submit':
                 print('You clicked log in')
             else:
-                print(event)
+                print(event, values)
 
     def close(self):
         """
@@ -75,14 +85,21 @@ class App:
         """
         self.window.close()
 
-    def launchCamera(self, device="laptop"):
+    def launchCameraTakePhoto(self, device="laptop"):
         """
-        launches camera class
+        launches camera class, takes a photo, updates that element
         keys: `display` and `twilio`
         :return:
         """
-        cam = WhoCam(device, display=True)
-        cam.takePhoto()
+        if not self.camera_active:
+            cam = WhoCam(device, display=True)
+            self.camera_active = True
+        self.convertSizeAndTypeThenUpdate(cam.takePhoto())
+
+    def convertSizeAndTypeThenUpdate(self, image):
+        image.thumbnail(self.PIC_FRAME_SIZE)
+        image = ImageTk.PhotoImage(image)
+        self.window.find_element('-PICTUREFRAME-').Update(data=image)
 
 
 if __name__ == '__main__':
