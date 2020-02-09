@@ -60,7 +60,7 @@ class App:
             if event is None:  # always, always give a way out!
                 break
             elif event is 'Camera':
-                self.launchCamera(command="PIC")
+                self.launchCamera("laptop")     # also could take `pi` or `test`
             elif event is 'Submit':
                 print('You clicked log in')
 
@@ -71,18 +71,14 @@ class App:
         """
         self.window.close()
 
-    def launchCamera(self, command):
+    def launchCamera(self, device="laptop"):
         """
         launches camera class
         keys: `display` and `twilio`
         :return:
         """
-        cam = WhoCam(display=True)
-        if command == "PIC":
-            cam.takePhoto()
-        elif command == "VID":
-            cam.takeVideo()
-        pass
+        cam = WhoCam(device, display=True)
+        cam.takePhoto()
 
 
 if __name__ == '__main__':

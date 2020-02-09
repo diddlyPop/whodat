@@ -3,23 +3,33 @@ camera WhoCam class
 """
 # import cv2
 
-class WhoCam:
-    def __init__(self, display=False, twilio=False):
-        self.launchDisplay = display
-        if twilio:
-            pass
 
-    def takeVideo(self):
-        pass
+class WhoCam:
+    def __init__(self, device, display=False, twilio=False):
+        self.device = device
+        self.display = display
+        self.twilio = twilio
+        print(f"Device: {device}")
+        print(f"Display: {display}")
+        print(f"Twilio: {twilio}")
+
+    def startVideo(self):
+        print("Starting video stream")
+        input("Press Enter to continue")
 
     def takePhoto(self):
-        pass
+        print("Took a photo")
+        if self.display:
+            print("Showing photo")
+            # Wait until key press or closee window
+        else:
+            print("Not showing photos rn")
 
     def close(self):
-        self.window.close()
+        pass
 
 
 if __name__ == '__main__':
-    whodat = WhoCam(display=True)
-    whodat.start()
-    whodat.close()
+    whocamera = WhoCam("pi", twilio=True)
+    whocamera.takePhoto()
+
