@@ -20,7 +20,9 @@ class App:
         # TODO: make it a standard photo size so it is easy to convert photos into
         # TODO: return photo from whocam.takePhoto() into photo frame
         self.lab_layout = [[sg.Text('Train your Pi to recognize your friends and family')],
-                           [sg.Button('Train', key='-TRAIN-'), sg.Button('Camera')]]
+                           [sg.Button('Train', key='-TRAIN-'), sg.Button('Camera')],
+                           [sg.InputText(), sg.FileBrowse()],
+                           [sg.InputText(), sg.Button("Label")]]
 
         self.twilio_layout = [[sg.Text('Link your Twilio to receive message updates from WhoDat')],
                               [sg.Text('Log in\t'), sg.Input(key='-USERNAME-')],
@@ -63,6 +65,8 @@ class App:
                 self.launchCamera("laptop")     # also could take `pi` or `test`
             elif event is 'Submit':
                 print('You clicked log in')
+            else:
+                print(event)
 
     def close(self):
         """
