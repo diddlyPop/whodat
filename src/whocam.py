@@ -37,6 +37,7 @@ class WhoCam:
         if self.device == "pi":
             self.camera.capture(self.rawCapture, format="bgr")
             img = self.rawCapture.array
+            img = Image.fromarray(img)
         elif self.device == "laptop":
             check, img = self.camera.read()
             # Convert to RGB
