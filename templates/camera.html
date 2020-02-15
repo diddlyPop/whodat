@@ -1,0 +1,5 @@
+{% extends "base.html" %}
+{% block title %}Camera{% endblock %}
+{% block content %}
+<img id="video" src="{{ url_for('video_feed') }}"/>
+{% endblock %}
