@@ -7,6 +7,7 @@ from whocam import WhoCam
 import PIL
 from PIL import Image, ImageTk
 
+# TODO: add controller for device variables
 
 class App:
     def __init__(self):
