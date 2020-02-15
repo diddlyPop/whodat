@@ -13,6 +13,7 @@ class App:
         """
         set up App with all layouts and themes, constructs window at end
         """
+        self.cam = None
         self.did_load = True
         sg.theme('Dark Amber')
         self.camera_active = False
@@ -92,9 +93,9 @@ class App:
         :return:
         """
         if not self.camera_active:
-            cam = WhoCam(device, display=True)
+            self.cam = WhoCam(device, display=True)
             self.camera_active = True
-        self.convertSizeAndTypeThenUpdate(cam.takePhoto())
+        self.convertSizeAndTypeThenUpdate(self.cam.takePhoto())
 
     def convertSizeAndTypeThenUpdate(self, image):
         image.thumbnail(self.PIC_FRAME_SIZE)

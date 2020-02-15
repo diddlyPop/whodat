@@ -34,11 +34,31 @@ class WhoCam:
         else:
             print("Not showing photos rn")
 
+        if self.device == "pi":
+            self.camera.capture(self.rawCapture, format="bgr")
+            img = self.rawCapture.array
+        elif self.device == "laptop":
+            check, img = self.camera.read()
+            # Convert to RGB
+            cv2_im = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+
+            # Read image in PIL format
+            img = Image.fromarray(cv2_im)
+        else:
+            img = Image.open("pie.jpg")
+
     def takePhoto(self):
         if self.device == "pi":
             self.camera.capture(self.rawCapture, format="bgr")
             img = self.rawCapture.array
         elif self.device == "laptop":
+            check, img = self.camera.read()
+            # Convert to RGB
+            cv2_im = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+
+            # Read image in PIL format
+            img = Image.fromarray(cv2_im)
+        else:
             img = Image.open("pie.jpg")
 
         print("Took a photo")
