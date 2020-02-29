@@ -88,11 +88,11 @@ Pi Hardware
 
 Pi Software
 ------------
-TODO
+The raspberry pi will use a lightweight version of Raspbian. Our goal is to include the project within a docker image to eliminate the possibility of enviroment issues.
 
 Image Classifier
 ------------
-TODO
+We are using OpenCV with the dlib library to recognize faces. The dlib library has been trained on over 3 million faces.
 
 GUI
 ------------
