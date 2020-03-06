@@ -35,20 +35,32 @@ Linux
 git clone https://github.com/diddlypop/whodat.git
 cd whodat
 
-//download python3.7.6 or use pyenv (not available in pip / will need to compile from source)
+// download python3.7.6 or use pyenv (not available in pip / will need to compile from source)
 //    to change global python version to python3.7.6
 
-//activate virtualenv or use pipenv (`pip install pipenv` outside of virtual environment)
+// activate virtualenv or use pipenv (`pip install pipenv` outside of virtual environment)
 
 pip install -r requirements.txt
 
-//call pytest to run test suite
+// call pytest to run test suite
 pytest
 ```
 
 macOS 
 ```
-TODO
+// face detection setup
+
+brew install cmake
+
+pip install dlib
+pip install imutils
+pip install face-recognition
+
+// place directories inside profiles/ that are named after the person you are looking to encode for
+// place all photos of that person in their named directory
+python encode_faces.py --dataset profiles/ --encodings encodings.pickle --detection-method hog
+
+python pi_face_recognition.py -c haarcascade_frontalface_default.xml -e encodings.pickle
 ```
 
 Windows
