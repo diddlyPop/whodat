@@ -1,7 +1,5 @@
 from flask import Flask as fl
 from flask import Response, redirect, url_for, render_template, request
-from camera import VideoCamera
-from pi_face_recognition import Face_Recognition
 import cv2
 from imutils.video import VideoStream
 from imutils.video import FPS
@@ -11,22 +9,26 @@ import imutils
 import pickle
 import time
 import cv2
+import threading
+import time
 
 app = fl(__name__)
 
 # This is a necessary step to load the var, but wait to initiate
 video_stream = None
 
-DRAW_FRAMES = False
+global outputFrame, lock
 
-@app.route("/")
-def home():
-    return render_template("index.html")
+lock = threading.Lock()
+outputFrame = None
 
 
-def gen():
-    video_stream = Face_Recognition()
-    while True:
+class Recognizer:
+    def __init__(self):
+        self.DRAW_FRAMES = False
+
+
+    def run(self):
         print("loading encodings + face detector...")
         data = pickle.loads(open("encodings.pickle", "rb").read())
         detector = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
@@ -34,7 +36,7 @@ def gen():
         vs = VideoStream(src=0).start()
         time.sleep(2.0)
         fps = FPS().start()
-
+        global outputFrame
         while True:
             frame = vs.read()
             frame = imutils.resize(frame, width=500)
@@ -78,7 +80,7 @@ def gen():
                     y = top - 15 if top - 15 > 15 else top + 15
                     cv2.putText(frame, name, (left, y), cv2.FONT_HERSHEY_SIMPLEX,
                                 0.75, (255, 255, 255), 2)
-            if DRAW_FRAMES:
+            if self.DRAW_FRAMES:
                 cv2.imshow("Frame", frame)
                 key = cv2.waitKey(1) & 0xFF
 
@@ -86,16 +88,35 @@ def gen():
                     break
                 fps.update()
             else:
-                cv2.imwrite('t.jpg', frame)
-                yield (b'--frame\r\n'
-                       b'Content-Type: image/jpeg\r\n\r\n' + open('t.jpg', 'rb').read())
+                with lock:
+                    outputFrame = frame.copy()
 
+@app.route("/")
+def home():
+    return render_template("index.html")
+
+
+def gen():
+    global outputFrame
+    while True:
+        (flag, encodedImage) = cv2.imencode(".jpg", outputFrame)
+        if not flag:
+            continue
+        yield (b'--frame\r\n'
+               b'Content-Type: image/jpeg\r\n\r\n' + bytearray(encodedImage) + b'\r\n')
+
+
+@app.route('/camera')
+def camera():
+    if request.method == "POST":
+        pass
+    else:
+        return render_template("camera.html")
 
 
 @app.route('/video_feed')
 def video_feed():
-    return Response(gen(),
-                    mimetype='multipart/x-mixed-replace; boundary=frame')
+    return Response(gen(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
 @app.route("/twilio", methods=["POST", "GET"])
@@ -119,4 +140,8 @@ def user(usr):
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    agent = Recognizer()
+    t = threading.Thread(target=agent.run)
+    t.daemon = True
+    t.start()
+    app.run(debug=True, threaded=True, use_reloader=False)
