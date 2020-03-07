@@ -1,8 +1,3 @@
-from flask import Flask as fl
-from flask import Response, redirect, url_for, render_template, request
-from camera import VideoCamera
-from pi_face_recognition import Face_Recognition
-import cv2
 from imutils.video import VideoStream
 from imutils.video import FPS
 import face_recognition
@@ -12,21 +7,23 @@ import pickle
 import time
 import cv2
 
-app = fl(__name__)
-
-# This is a necessary step to load the var, but wait to initiate
-video_stream = None
-
-DRAW_FRAMES = False
-
-@app.route("/")
-def home():
-    return render_template("index.html")
 
 
-def gen():
-    video_stream = Face_Recognition()
-    while True:
+class Face_Recognition:
+    def __init__(self):
+        self.DRAW_FRAMES = False
+
+    def get_frame(self):
+        ret, frame = self.video.read()
+
+        # DO WHAT YOU WANT WITH TENSORFLOW / KERAS AND OPENCV
+
+        ret, jpeg = cv2.imencode('.jpg', frame)
+
+        return jpeg.tobytes()
+
+    def start(self):
+
         print("loading encodings + face detector...")
         data = pickle.loads(open("encodings.pickle", "rb").read())
         detector = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
@@ -71,6 +68,7 @@ def gen():
                     # choose the name with the highest probibility (# of votes of confidence) and append it
                     name = max(counts, key=counts.get)
                 names.append(name)
+            if self.DRAW_FRAMES:
                 # draw name and bounding boxes
                 for ((top, right, bottom, left), name) in zip(boxes, names):
                     cv2.rectangle(frame, (left, top), (right, bottom),
@@ -78,7 +76,6 @@ def gen():
                     y = top - 15 if top - 15 > 15 else top + 15
                     cv2.putText(frame, name, (left, y), cv2.FONT_HERSHEY_SIMPLEX,
                                 0.75, (255, 255, 255), 2)
-            if DRAW_FRAMES:
                 cv2.imshow("Frame", frame)
                 key = cv2.waitKey(1) & 0xFF
 
@@ -86,37 +83,10 @@ def gen():
                     break
                 fps.update()
             else:
-                cv2.imwrite('t.jpg', frame)
-                yield (b'--frame\r\n'
-                       b'Content-Type: image/jpeg\r\n\r\n' + open('t.jpg', 'rb').read())
+                pass
 
-
-
-@app.route('/video_feed')
-def video_feed():
-    return Response(gen(),
-                    mimetype='multipart/x-mixed-replace; boundary=frame')
-
-
-@app.route("/twilio", methods=["POST", "GET"])
-def twilio():
-    if request.method == "POST":
-        auth = request.form["nm"]
-
-        # some connection to twilio to try api key
-
-        # return a redirect back to twilio page with authentication success/failure
-        # if successful, return render_template("twilio_conn_success.html")
-        # if failure, do the following:
-        return render_template("twilio_conn_failed.html")
-    else:
-        return render_template("twilio.html")
-
-
-@app.route("/<usr>")
-def user(usr):
-    return f"<h1>{usr}</h1>"
-
-
-if __name__ == "__main__":
-    app.run(debug=True)
+        fps.stop()
+        print("elasped time: {:.2f}".format(fps.elapsed()))
+        print(" approx. FPS: {:.2f}".format(fps.fps()))
+        cv2.destroyAllWindows()
+        vs.stop()
