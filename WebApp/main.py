@@ -27,7 +27,6 @@ class Recognizer:
     def __init__(self):
         self.DRAW_FRAMES = False
 
-
     def run(self):
         print("loading encodings + face detector...")
         data = pickle.loads(open("encodings.pickle", "rb").read())
