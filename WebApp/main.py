@@ -140,8 +140,10 @@ def user(usr):
 
 
 if __name__ == "__main__":
-    agent = Recognizer()
-    t = threading.Thread(target=agent.run)
-    t.daemon = True
-    t.start()
+    RUN_CAMERA = True
+    if RUN_CAMERA:
+        agent = Recognizer()
+        t = threading.Thread(target=agent.run)
+        t.daemon = True
+        t.start()
     app.run(debug=True, threaded=True, use_reloader=False)
