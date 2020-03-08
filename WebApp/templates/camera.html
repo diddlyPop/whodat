@@ -9,19 +9,21 @@
 </div>
 <hr>
 <br>
-<div class="code">
-    <br>
-    <div class="console">
-        <div class="row">
-    <div class="col">
-        <div class="mx-auto text-center">
-            <img style='height: 100%; width: 100%; object-fit: contain; border-radius: 8px;' id="video" src="{{ url_for('video_feed') }}"/>
+<div class="col-8 mx-auto">
+    <div class="code">
+        <br>
+        <div class="console">
+            <div class="row">
+                <div class="col">
+                    <div class="mx-auto text-center">
+                        <img style='height: 100%; width: 100%; border-radius: 8px;' id="video"
+                             src="{{ url_for('video_feed') }}"/>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
-    </div>
-</div>
-
 
 
 {% endblock %}
