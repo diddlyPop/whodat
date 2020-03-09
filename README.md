@@ -48,24 +48,49 @@ pytest
 
 macOS 
 ```
-// face detection setup
+// face detection uses dlib 
+// when we install dlib through `pip install -r requirements` we will need to have cmake on our path.
 
 brew install cmake
 
-pip install dlib
-pip install imutils
-pip install face-recognition
+git clone https://github.com/diddlypop/whodat.git
+cd whodat
 
-// place directories inside profiles/ that are named after the person you are looking to encode for
-// place all photos of that person in their named directory
-python encode_faces.py --dataset profiles/ --encodings encodings.pickle --detection-method hog
+// download python3.7.6 or use pyenv (not available in pip / will need to compile from source)
+//    to change global python version to python3.7.6
 
-python pi_face_recognition.py -c haarcascade_frontalface_default.xml -e encodings.pickle
+// activate virtualenv or use pipenv (`pip install pipenv` outside of virtual environment)
+
+pip install -r requirements.txt
 ```
 
 Windows
 ```
 TODO
+```
+
+Encodings
+```
+// place directories inside profiles/ that are named after the person you are looking to encode for
+// place all photos of that person in their named directory
+
+cd assets
+mkdir profiles/
+
+// place photos inside profiles
+
+python encode_faces.py --dataset profiles/ --encodings encodings.pickle --detection-method hog
+
+python pi_face_recognition.py -c haarcascade_frontalface_default.xml -e encodings.pickle
+```
+
+Flask
+```
+// to run flask test server run the WebApp/main.py
+
+python main.py
+
+// direct browser to 127.0.0.1:5000/
 ```
 
 Dependencies
