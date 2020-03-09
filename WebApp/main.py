@@ -145,4 +145,4 @@ if __name__ == "__main__":
         t = threading.Thread(target=agent.run)
         t.daemon = True
         t.start()
-    app.run(debug=True, threaded=True, use_reloader=False)
+    app.run(debug=True, threaded=True, use_reloader=False)  # host='0.0.0.0' keyword to access on another machine
