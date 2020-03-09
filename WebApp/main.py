@@ -26,18 +26,19 @@ outputFrame = None
 class Recognizer:
     def __init__(self):
         self.DRAW_FRAMES = False
+        self.vs = None
 
     def run(self):
         print("loading encodings + face detector...")
         data = pickle.loads(open("encodings.pickle", "rb").read())
         detector = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
         print("starting video stream...")
-        vs = VideoStream(src=0).start()
+        self.vs = VideoStream(src=0).start()
         time.sleep(2.0)
         fps = FPS().start()
         global outputFrame
         while True:
-            frame = vs.read()
+            frame = self.vs.read()
             frame = imutils.resize(frame, width=500)
 
             # create greyscale and rgb/brg versions for detection
@@ -89,6 +90,7 @@ class Recognizer:
             else:
                 with lock:
                     outputFrame = frame.copy()
+
 
 @app.route("/")
 def home():
@@ -146,3 +148,5 @@ if __name__ == "__main__":
         t.daemon = True
         t.start()
     app.run(debug=True, threaded=True, use_reloader=False)  # host='0.0.0.0' keyword to access on another machine
+    if RUN_CAMERA:
+        agent.vs.stream.release()
