@@ -1,5 +1,84 @@
 {% extends "base.html" %}
 {% block title %}Home Page{% endblock %}
 {% block content %}
-<h1>Test</h1>
+<div class="row">
+    <div class="col mx-auto text-center">
+        <h1>Landing Page</h1>
+    </div>
+</div>
+<hr>
+<br>
+<div class="mx-auto">
+    <div class="code">
+        <br>
+        <div class="console">
+            <div class="row">
+                <div class="col">
+                    <div class="mx-auto text-center">
+                        <img style='height: 100%; width: 100%; border-radius: 8px;' id="video"
+                             src="{{ url_for('video_feed') }}"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<br>
+<hr>
+<nav>
+		<div class="nav nav-tabs nav-justified" id="nav-tab" role="tablist">
+			<a class="nav-item nav-link active" id="nav-setup-tab" data-toggle="tab" href="#nav-setup" role="tab" aria-controls="nav-setup" aria-selected="true" style="font-size: 12px;">Setup</a>
+			<a class="nav-item nav-link" id="nav-train-tab" data-toggle="tab" href="#nav-train" role="tab" aria-controls="nav-train" aria-selected="false" style="font-size: 12px;">Train</a>
+			<a class="nav-item nav-link" id="nav-twilio-tab" data-toggle="tab" href="#nav-twilio" role="tab" aria-controls="nav-twilio" aria-selected="false" style="font-size: 12px;">Twilio</a>
+			<a class="nav-item nav-link" id="nav-upload-tab" data-toggle="tab" href="#nav-upload" role="tab" aria-controls="nav-upload" aria-selected="false" style="font-size: 12px;">Upload</a>
+			<a class="nav-item nav-link" id="nav-about-tab" data-toggle="tab" href="#nav-about" role="tab" aria-controls="nav-about" aria-selected="false" style="font-size: 12px;">About</a>
+		</div>
+	</nav>
+<div class="tab-content" id="nav-tabContent">
+    <div class="tab-pane fade show active" id="nav-setup" role="tabpanel" aria-labelledby="nav-setup-tab"><p>Configure
+        settings and finalize setup</p></div>
+    <div class="tab-pane fade" id="nav-train" role="tabpanel" aria-labelledby="nav-train-tab">
+        <p>Train your Pi to recognize your friends and family</p>
+        <button type="button" class="btn btn-primary">Train</button>
+        <button type="button" class="btn btn-secondary">Test</button>
+    </div>
+    <div class="tab-pane fade" id="nav-twilio" role="tabpanel" aria-labelledby="nav-twilio-tab">
+        <label for="basic-url">Link your Twilio account to receive message updates from WhoDat</label>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon3">User Name:</span>
+            </div>
+            <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3">
+        </div>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon3">API:</span>
+            </div>
+            <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3">
+        </div>
+
+        <button type="button" class="btn btn-primary">Submit</button>
+    </div>
+    <form action="/" method='put' enctype='multipart/form-data'>
+        <div class="tab-pane fade" id="nav-upload" role="tabpanel" aria-labelledby="nav-upload-tab">
+
+            <p>Upload file here:</p>
+            <div class="input-group">
+                <div class="custom-file">
+                    <input type="file" accept=".txt" class="custom-file-input" id="inputGroupFile04"
+                           aria-describedby="inputGroupFileAddon04">
+                    <label class="custom-file-label" for="inputGroupFile04">Choose file</label>
+                </div>
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="button" id="inputGroupFileAddon04">Upload</button>
+                </div>
+            </div>
+        </div>
+    </form>
+    <div class="tab-pane fade" id="nav-about" role="tabpanel" aria-labelledby="nav-about-tab">WhoDat was designed by a
+        group of 6 students to practice machine learning with python, the use of APIs and linking hardware with
+        software. Their implementation allows you to use your raspberry pi as a facial recognition system. To get
+        started,upload images using the Train tab and test it out!
+    </div>
+</div>
 {% endblock %}

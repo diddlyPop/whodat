@@ -35,25 +35,62 @@ Linux
 git clone https://github.com/diddlypop/whodat.git
 cd whodat
 
-//download python3.7.6 or use pyenv (not available in pip / will need to compile from source)
+// download python3.7.6 or use pyenv (not available in pip / will need to compile from source)
 //    to change global python version to python3.7.6
 
-//activate virtualenv or use pipenv (`pip install pipenv` outside of virtual environment)
+// activate virtualenv or use pipenv (`pip install pipenv` outside of virtual environment)
 
 pip install -r requirements.txt
 
-//call pytest to run test suite
+// call pytest to run test suite
 pytest
 ```
 
 macOS 
 ```
-TODO
+// face detection uses dlib 
+// when we install dlib through `pip install -r requirements` we will need to have cmake on our path.
+
+brew install cmake
+
+git clone https://github.com/diddlypop/whodat.git
+cd whodat
+
+// download python3.7.6 or use pyenv (not available in pip / will need to compile from source)
+//    to change global python version to python3.7.6
+
+// activate virtualenv or use pipenv (`pip install pipenv` outside of virtual environment)
+
+pip install -r requirements.txt
 ```
 
 Windows
 ```
 TODO
+```
+
+Encodings
+```
+// place directories inside profiles/ that are named after the person you are looking to encode for
+// place all photos of that person in their named directory
+
+cd assets
+mkdir profiles/
+
+// place photos inside profiles
+
+python encode_faces.py --dataset profiles/ --encodings encodings.pickle --detection-method hog
+
+python pi_face_recognition.py -c haarcascade_frontalface_default.xml -e encodings.pickle
+```
+
+Flask
+```
+// to run flask test server run the WebApp/main.py
+
+python main.py
+
+// direct browser to 127.0.0.1:5000/
 ```
 
 Dependencies
@@ -88,11 +125,11 @@ Pi Hardware
 
 Pi Software
 ------------
-TODO
+The raspberry pi will use a lightweight version of Raspbian. Our goal is to include the project within a docker image to eliminate the possibility of enviroment issues.
 
 Image Classifier
 ------------
-TODO
+We are using OpenCV with the dlib library to recognize faces. The dlib library has been trained on over 3 million faces.
 
 GUI
 ------------

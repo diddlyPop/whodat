@@ -1,6 +1,3 @@
-from flask import Flask as fl
-from flask import Response, redirect, url_for, render_template, request
-import cv2
 from imutils.video import VideoStream
 from imutils.video import FPS
 import face_recognition
@@ -9,36 +6,34 @@ import imutils
 import pickle
 import time
 import cv2
-import threading
-import time
-
-app = fl(__name__)
-
-# This is a necessary step to load the var, but wait to initiate
-video_stream = None
-
-global outputFrame, lock
-
-lock = threading.Lock()
-outputFrame = None
 
 
-class Recognizer:
+
+class Face_Recognition:
     def __init__(self):
         self.DRAW_FRAMES = False
-        self.vs = None
 
-    def run(self):
+    def get_frame(self):
+        ret, frame = self.video.read()
+
+        # DO WHAT YOU WANT WITH TENSORFLOW / KERAS AND OPENCV
+
+        ret, jpeg = cv2.imencode('.jpg', frame)
+
+        return jpeg.tobytes()
+
+    def start(self):
+
         print("loading encodings + face detector...")
         data = pickle.loads(open("encodings.pickle", "rb").read())
         detector = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
         print("starting video stream...")
-        self.vs = VideoStream(src=0).start()
+        vs = VideoStream(src=0).start()
         time.sleep(2.0)
         fps = FPS().start()
-        global outputFrame
+
         while True:
-            frame = self.vs.read()
+            frame = vs.read()
             frame = imutils.resize(frame, width=500)
 
             # create greyscale and rgb/brg versions for detection
@@ -73,6 +68,7 @@ class Recognizer:
                     # choose the name with the highest probibility (# of votes of confidence) and append it
                     name = max(counts, key=counts.get)
                 names.append(name)
+            if self.DRAW_FRAMES:
                 # draw name and bounding boxes
                 for ((top, right, bottom, left), name) in zip(boxes, names):
                     cv2.rectangle(frame, (left, top), (right, bottom),
@@ -80,7 +76,6 @@ class Recognizer:
                     y = top - 15 if top - 15 > 15 else top + 15
                     cv2.putText(frame, name, (left, y), cv2.FONT_HERSHEY_SIMPLEX,
                                 0.75, (255, 255, 255), 2)
-            if self.DRAW_FRAMES:
                 cv2.imshow("Frame", frame)
                 key = cv2.waitKey(1) & 0xFF
 
@@ -88,65 +83,10 @@ class Recognizer:
                     break
                 fps.update()
             else:
-                with lock:
-                    outputFrame = frame.copy()
+                pass
 
-
-@app.route("/")
-def home():
-    return render_template("index.html")
-
-
-def gen():
-    global outputFrame
-    while True:
-        (flag, encodedImage) = cv2.imencode(".jpg", outputFrame)
-        if not flag:
-            continue
-        yield (b'--frame\r\n'
-               b'Content-Type: image/jpeg\r\n\r\n' + bytearray(encodedImage) + b'\r\n')
-
-
-@app.route('/camera')
-def camera():
-    if request.method == "POST":
-        pass
-    else:
-        return render_template("camera.html")
-
-
-@app.route('/video_feed')
-def video_feed():
-    return Response(gen(), mimetype='multipart/x-mixed-replace; boundary=frame')
-
-
-@app.route("/twilio", methods=["POST", "GET"])
-def twilio():
-    if request.method == "POST":
-        auth = request.form["nm"]
-
-        # some connection to twilio to try api key
-
-        # return a redirect back to twilio page with authentication success/failure
-        # if successful, return render_template("twilio_conn_success.html")
-        # if failure, do the following:
-        return render_template("twilio_conn_failed.html")
-    else:
-        return render_template("twilio.html")
-
-
-@app.route("/<usr>")
-def user(usr):
-    return f"<h1>{usr}</h1>"
-
-
-if __name__ == "__main__":
-    RUN_CAMERA = True
-    if RUN_CAMERA:
-        agent = Recognizer()
-        t = threading.Thread(target=agent.run)
-        t.daemon = True
-        t.start()
-    app.run(debug=True, threaded=True, use_reloader=False)  # host='0.0.0.0' keyword to access on another machine
-    if RUN_CAMERA:
-        agent.vs.stream.release()
+        fps.stop()
+        print("elasped time: {:.2f}".format(fps.elapsed()))
+        print(" approx. FPS: {:.2f}".format(fps.fps()))
+        cv2.destroyAllWindows()
+        vs.stop()
