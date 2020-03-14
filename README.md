@@ -17,6 +17,7 @@ Table of contents
 <!--ts-->
    * [Table of contents](#table-of-contents)
    * [Installation](#installation)
+   * [Setup](#setup)
    * [Dependencies](#dependencies)
    * [Pi Setup](#pi-setup)
    * [Docs](#docs)
@@ -32,18 +33,7 @@ Installation
 ============
 Linux 
 ```
-git clone https://github.com/diddlypop/whodat.git
-cd whodat
-
-// download python3.7.6 or use pyenv (not available in pip / will need to compile from source)
-//    to change global python version to python3.7.6
-
-// activate virtualenv or use pipenv (`pip install pipenv` outside of virtual environment)
-
-pip install -r requirements.txt
-
-// call pytest to run test suite
-pytest
+TODO
 ```
 
 macOS 
@@ -69,6 +59,9 @@ Windows
 TODO
 ```
 
+Setup
+============
+
 Encodings
 ```
 // place directories inside profiles/ that are named after the person you are looking to encode for
@@ -93,6 +86,11 @@ python main.py
 // direct browser to 127.0.0.1:5000/
 ```
 
+Testing
+```
+// call pytest to run test suite
+pytest
+```
 Dependencies
 ============
 * twilio [![Build Status](https://secure.travis-ci.org/twilio/twilio-python.png?branch=master)](https://travis-ci.org/twilio/twilio-python)
