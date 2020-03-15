@@ -32,6 +32,25 @@ class Recognizer:
     def __init__(self):
         self.DRAW_FRAMES = False
         self.vs = None
+        self.delay_cache = {}
+
+    def face_trigger(self, name):
+        print(f"Recognized {name}")
+        if self.needs_delay(name):
+            print("Delaying")
+        else:
+            self.delay_notifications_for(name)
+            print("Send a message")
+
+    def needs_delay(self, name):
+        return False
+
+    def delay_notifications_for(self, name):
+        if name in self.delay_cache:
+            # check if can remove from delay_cache based on time
+            print("Name in delay cache")
+        else:
+            self.delay_cache[name] = time.time()
 
     def run(self):
         print("loading encodings + face detector...")
@@ -41,6 +60,7 @@ class Recognizer:
         self.vs = VideoStream(src=0).start()
         time.sleep(2.0)
         fps = FPS().start()
+        current_faces = {}
         global outputFrame
         while True:
             frame = self.vs.read()
@@ -85,6 +105,12 @@ class Recognizer:
                     y = top - 15 if top - 15 > 15 else top + 15
                     cv2.putText(frame, name, (left, y), cv2.FONT_HERSHEY_SIMPLEX,
                                 0.75, (255, 255, 255), 2)
+                    if name in current_faces:
+                        current_faces[name] += 1
+                    else:
+                        current_faces[name] = 1
+                    if current_faces[name] == 20:
+                        self.face_trigger(name)
             if self.DRAW_FRAMES:
                 cv2.imshow("Frame", frame)
                 key = cv2.waitKey(1) & 0xFF
