@@ -57,6 +57,8 @@ pip install -r requirements.txt
 Windows
 ```
 TODO
+
+https://cmake.org/download/
 ```
 
 Setup
