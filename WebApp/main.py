@@ -11,6 +11,8 @@ import time
 import cv2
 import threading
 import time
+from flask import send_file
+import os
 
 app = fl(__name__)
 
@@ -18,6 +20,8 @@ app = fl(__name__)
 video_stream = None
 
 global outputFrame, lock
+global RUN_CAMERA
+RUN_CAMERA = False
 
 lock = threading.Lock()
 outputFrame = None
@@ -92,7 +96,24 @@ class Recognizer:
                     outputFrame = frame.copy()
 
 
-@app.route("/")
+ALLOWED_EXTENSIONS = {'jpeg', 'jpg', 'png'}
+
+
+# Not currently working ?
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+@app.route('/upload_file', methods=['POST'])
+def upload_file():
+        if 'photo' in request.files:
+            photo = request.files['photo']
+            if photo.filename != '':  # and allowed_file(photo)
+                photo.save(os.path.join('../assets/profiles', photo.filename))
+
+        return redirect(url_for('home'))
+
+@app.route('/')
 def home():
     return render_template("index.html")
 
@@ -117,7 +138,11 @@ def camera():
 
 @app.route('/video_feed')
 def video_feed():
-    return Response(gen(), mimetype='multipart/x-mixed-replace; boundary=frame')
+    if RUN_CAMERA:
+        return Response(gen(), mimetype='multipart/x-mixed-replace; boundary=frame')
+    else:
+        filename = 'static/WHODAT_Title3.png'
+        return send_file(filename, mimetype='image/jpg')
 
 
 @app.route("/twilio", methods=["POST", "GET"])
@@ -141,7 +166,7 @@ def user(usr):
 
 
 if __name__ == "__main__":
-    RUN_CAMERA = True
+
     if RUN_CAMERA:
         agent = Recognizer()
         t = threading.Thread(target=agent.run)
