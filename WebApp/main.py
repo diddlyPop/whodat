@@ -11,6 +11,7 @@ import time
 import cv2
 import threading
 import time
+from flask import send_file
 
 app = fl(__name__)
 
@@ -18,6 +19,8 @@ app = fl(__name__)
 video_stream = None
 
 global outputFrame, lock
+global RUN_CAMERA
+RUN_CAMERA = False
 
 lock = threading.Lock()
 outputFrame = None
@@ -117,7 +120,11 @@ def camera():
 
 @app.route('/video_feed')
 def video_feed():
-    return Response(gen(), mimetype='multipart/x-mixed-replace; boundary=frame')
+    if RUN_CAMERA:
+        return Response(gen(), mimetype='multipart/x-mixed-replace; boundary=frame')
+    else:
+        filename = 'static\WHODAT_Title3.png'
+        return send_file(filename, mimetype='image/jpg')
 
 
 @app.route("/twilio", methods=["POST", "GET"])
@@ -141,7 +148,7 @@ def user(usr):
 
 
 if __name__ == "__main__":
-    RUN_CAMERA = True
+
     if RUN_CAMERA:
         agent = Recognizer()
         t = threading.Thread(target=agent.run)
