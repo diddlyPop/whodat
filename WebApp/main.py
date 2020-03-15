@@ -12,6 +12,8 @@ import cv2
 import threading
 import time
 from flask import send_file
+import os
+
 
 app = fl(__name__)
 
@@ -95,7 +97,24 @@ class Recognizer:
                     outputFrame = frame.copy()
 
 
-@app.route("/")
+ALLOWED_EXTENSIONS = {'jpeg', 'jpg', 'png'}
+
+
+# Not currently working ?
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+@app.route('/upload_file', methods=['POST'])
+def upload_file():
+        if 'photo' in request.files:
+            photo = request.files['photo']
+            if photo.filename != '':  # and allowed_file(photo)
+                photo.save(os.path.join('../assets/profiles', photo.filename))
+
+        return redirect(url_for('home'))
+
+@app.route('/')
 def home():
     return render_template("index.html")
 
@@ -123,7 +142,7 @@ def video_feed():
     if RUN_CAMERA:
         return Response(gen(), mimetype='multipart/x-mixed-replace; boundary=frame')
     else:
-        filename = 'static\WHODAT_Title3.png'
+        filename = 'static/WHODAT_Title3.png'
         return send_file(filename, mimetype='image/jpg')
 
 
