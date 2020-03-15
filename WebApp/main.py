@@ -36,21 +36,13 @@ class Recognizer:
 
     def face_trigger(self, name):
         print(f"Recognized {name}")
-        if self.needs_delay(name):
-            print("Delaying")
-        else:
-            self.delay_notifications_for(name)
-            print("Send a message")
-
-    def needs_delay(self, name):
-        return False
-
-    def delay_notifications_for(self, name):
         if name in self.delay_cache:
-            # check if can remove from delay_cache based on time
-            print("Name in delay cache")
+            diff = time.time() - self.delay_cache[name]
+            print(diff)
+            # if time diff greater than some threshold, send message
         else:
             self.delay_cache[name] = time.time()
+            print("Send a message")
 
     def run(self):
         print("loading encodings + face detector...")
