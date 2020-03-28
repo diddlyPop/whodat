@@ -20,14 +20,18 @@ app = fl(__name__)
 # This is a necessary step to load the var, but wait to initiate
 video_stream = None
 
+# Globals
 global outputFrame, lock
 global RUN_CAMERA
-RUN_CAMERA = False
 
+RUN_CAMERA = True
 lock = threading.Lock()
 outputFrame = None
 
+ALLOWED_EXTENSIONS = {'jpeg', 'jpg', 'png'}
 
+
+# Recognizer class handles facial recognition functionality
 class Recognizer:
     def __init__(self):
         self.DRAW_FRAMES = False
@@ -115,9 +119,6 @@ class Recognizer:
                     outputFrame = frame.copy()
 
 
-ALLOWED_EXTENSIONS = {'jpeg', 'jpg', 'png'}
-
-
 # Not currently working ?
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -131,6 +132,7 @@ def upload_file():
                 photo.save(os.path.join('../assets/profiles', photo.filename))
 
         return redirect(url_for('home'))
+
 
 @app.route('/')
 def home():
@@ -147,16 +149,9 @@ def gen():
                b'Content-Type: image/jpeg\r\n\r\n' + bytearray(encodedImage) + b'\r\n')
 
 
-@app.route('/camera')
-def camera():
-    if request.method == "POST":
-        pass
-    else:
-        return render_template("camera.html")
-
-
 @app.route('/video_feed')
 def video_feed():
+    # Global RUN_CAMERA used for determining current program state (if camera is needed)
     if RUN_CAMERA:
         return Response(gen(), mimetype='multipart/x-mixed-replace; boundary=frame')
     else:
@@ -164,28 +159,7 @@ def video_feed():
         return send_file(filename, mimetype='image/jpg')
 
 
-@app.route("/twilio", methods=["POST", "GET"])
-def twilio():
-    if request.method == "POST":
-        auth = request.form["nm"]
-
-        # some connection to twilio to try api key
-
-        # return a redirect back to twilio page with authentication success/failure
-        # if successful, return render_template("twilio_conn_success.html")
-        # if failure, do the following:
-        return render_template("twilio_conn_failed.html")
-    else:
-        return render_template("twilio.html")
-
-
-@app.route("/<usr>")
-def user(usr):
-    return f"<h1>{usr}</h1>"
-
-
 if __name__ == "__main__":
-
     if RUN_CAMERA:
         agent = Recognizer()
         t = threading.Thread(target=agent.run)
