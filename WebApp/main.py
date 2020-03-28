@@ -24,7 +24,7 @@ video_stream = None
 global outputFrame, lock
 global RUN_CAMERA
 
-RUN_CAMERA = True
+RUN_CAMERA = False
 lock = threading.Lock()
 outputFrame = None
 
@@ -37,16 +37,19 @@ class Recognizer:
         self.DRAW_FRAMES = False
         self.vs = None
         self.delay_cache = {}
+        self.delay_cache_threshold = 100
 
     def face_trigger(self, name):
         print(f"Recognized {name}")
         if name in self.delay_cache:
             diff = time.time() - self.delay_cache[name]
-            print(diff)
+            print(f"Last seen {diff} seconds ago")
+            if diff > self.delay_cache_threshold:
+                print("RESET DELAY CACHE FOR THIS NAME")
             # if time diff greater than some threshold, send message
         else:
             self.delay_cache[name] = time.time()
-            print("Send a message")
+            print("LINK TO TWILIO SEND MESSAGE FUNCTION HERE")
 
     def run(self):
         print("loading encodings + face detector...")
@@ -107,6 +110,7 @@ class Recognizer:
                         current_faces[name] = 1
                     if current_faces[name] == 20:
                         self.face_trigger(name)
+                        current_faces.clear()
             if self.DRAW_FRAMES:
                 cv2.imshow("Frame", frame)
                 key = cv2.waitKey(1) & 0xFF
