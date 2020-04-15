@@ -14,7 +14,7 @@ import time
 from flask import send_file
 import os
 from twilio.rest import Client as TwilioClient
-from secret_settings import account_sid, auth_token, from_number, to_number
+#from secret_settings import account_sid, auth_token, from_number, to_number
 
 app = fl(__name__)
 
@@ -25,7 +25,7 @@ video_stream = None
 global outputFrame, lock
 global RUN_CAMERA
 
-RUN_CAMERA = True
+RUN_CAMERA = False
 lock = threading.Lock()
 outputFrame = None
 
@@ -39,7 +39,7 @@ class Recognizer:
         self.vs = None
         self.delay_cache = {}
         self.delay_cache_threshold = 100
-        self.messenger = TwilioClient(account_sid, auth_token)
+        #self.messenger = TwilioClient(account_sid, auth_token)
         self.default_message = "Whodat? It looks like: "
 
     def face_trigger(self, name):
@@ -52,7 +52,7 @@ class Recognizer:
             # if time diff greater than some threshold, send message
         else:
             self.delay_cache[name] = time.time()
-            message = self.messenger.messages.create(body=self.default_message+name, from_=from_number, to=to_number)
+            #message = self.messenger.messages.create(body=self.default_message+name, from_=from_number, to=to_number)
 
     def run(self):
         print("loading encodings + face detector...")
