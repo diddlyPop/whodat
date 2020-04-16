@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <title>WhoDat</title>
   </head>
-  <body>
+  <body style='background-color: #F3F3F3'>
     <div class="container-fluid text-center bg-dark">
       <img src="{{url_for('static', filename='WHODAT_Title3_small.png')}}"/>
     </div>
@@ -15,7 +15,7 @@
       <div class="row">
         <div class="col-md">
           <h3>Live Feed:</h3>
-          <img style='width: 100%' id="video" src="{{ url_for('video_feed') }}"/>
+          <img style='width: 100%' class="bg-dark" id="video" src="{{ url_for('video_feed') }}"/>
           <br></br>
           <h3>Last Identified:</h3>
           <p>John Smith at 10:00 PM</p>
@@ -24,46 +24,63 @@
           <h3>Settings:</h3>
 
           <style>
-            .nav-link {
-              color: gray
+            .nav-tabs .nav-link{
+              color: gray;
+            }
+            .nav-link.active {
+              border-color: #F3F3F3!important;
+              background-color: #FFC107!important;
+              color: white!important;
             }
           </style>
 
           <nav>
-            <div class="nav nav-tabs" id="nav-tab" role="tablist">
-            	<a class="nav-item nav-link active" id="nav-configuration-tab" data-toggle="tab" href="#nav-configuration" role="tab" aria-controls="nav-configuration" aria-selected="true">Configuration</a>
-            	<a class="nav-item nav-link" id="nav-twilio-tab" data-toggle="tab" href="#nav-twilio" role="tab" aria-controls="nav-twilio" aria-selected="false">Twilio</a>
+            <div class="nav nav-tabs nav-justified" id="nav-tab" role="tablist">
+            	<a class="nav-item nav-link" id="nav-configuration-tab" data-toggle="tab" href="#nav-configuration" role="tab" aria-controls="nav-configuration" aria-selected="true">Configuration</a>
+            	<a class="nav-item nav-link active" id="nav-twilio-tab" data-toggle="tab" href="#nav-twilio" role="tab" aria-controls="nav-twilio" aria-selected="false">Twilio</a>
             	<a class="nav-item nav-link" id="nav-about-tab" data-toggle="tab" href="#nav-about" role="tab" aria-controls="nav-about" aria-selected="false">About</a>
             </div>
           </nav>
 
-          <div class="tab-content pt-2" id="nav-tabContent">
+          <div class="tab-content pt-2" id="pills-tabContent">
 
-              <div class="tab-pane fade show active" id="nav-configuration" role="tabpanel" aria-labelledby="nav-configuration-tab">
-                <p>Look! Here is a button!</p>
-                <button type="button" class="btn btn-secondary">Train</button>
-              </div>
+            <div class="tab-pane fade " id="nav-configuration" role="tabpanel" aria-labelledby="nav-configuration-tab">
+              <p>Look! Here is a button!</p>
+              <button type="button" class="btn btn-secondary">Train</button>
+            </div>
 
-              <div class="tab-pane fade" id="nav-twilio" role="tabpanel" aria-labelledby="nav-twilio-tab">
-                  <label for="basic-url">Enter your Twilio account to receive message updates from WhoDat:</label>
-                  <div class="input-group mb-3">
-                      <div class="input-group-prepend">
-                          <span class="input-group-text">Account SID:</span>
-                      </div>
-                      <input type="text" class="form-control" aria-describedby="basic-addon3">
-                  </div>
-                  <div class="input-group mb-3">
-                      <div class="input-group-prepend">
-                          <span class="input-group-text" id="basic-addon3">API:</span>
-                      </div>
-                      <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3">
-                  </div>
+            <div class="tab-pane fade show active" id="nav-twilio" role="tabpanel" aria-labelledby="nav-twilio-tab">
+              <p>Enter your Twilio account to receive message updates from WhoDat:</p>
 
-                  <button type="button" class="btn btn-secondary">Submit</button>
-              </div>
+              <form>
+                <div class="form-check">
+                  <input type="checkbox" class="form-check-input" id="twilioEnabled">
+                  <label class="form-check-label" for="twilioEnabled">Enabled</label>
+                </div>
+
+                <div class="form-group">
+                  <label for="twilioAccountSID">Account SID:</label>
+                  <input type="text" class="form-control" id="twilioAccountSID" disabled>
+                </div>
+                <div class="form-group">
+                  <label for="twilioAuthToken">Auth Token:</label>
+                  <input type="text" class="form-control" id="twilioAuthToken" disabled>
+                </div>
+                <div class="form-group">
+                  <label for="twilioFrom">From Number:</label>
+                  <input type="text" class="form-control" id="twilioFrom" disabled>
+                </div>
+                <div class="form-group">
+                  <label for="twilioTo">To Number:</label>
+                  <input type="text" class="form-control" id="twilioTo" disabled>
+                </div>
+
+                <button type="submit" class="btn btn-secondary">Apply</button>
+              </form>
+            </div>
 
               <div class="tab-pane fade" id="nav-about" role="tabpanel" aria-labelledby="nav-about-tab">
-                <p>WhoDat was designed by a of 6 students to practice machine learning with Python, the use of APIs and linking hardware with. Their implementation allows you to use your Raspberry PI as a facial recognition system.</p>
+                <p>WhoDat was designed by a team of 6 students to practice machine learning with Python. Their implementation allows you to use your Raspberry PI as a facial recognition system.</p>
               </div>
             </div>
         </div>
@@ -72,5 +89,22 @@
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <script>
+    <!--https://www.tutorialrepublic.com/faq/how-to-disable-or-enable-a-form-element-using-jquery.php-->
+    $("#twilioEnabled").click(function() {
+      if ($(this).prop("checked") == true) {
+        $('#twilioAccountSID').prop("disabled", false);
+        $('#twilioAuthToken').prop("disabled", false);
+        $('#twilioFrom').prop("disabled", false);
+        $('#twilioTo').prop("disabled", false);
+      }
+      else {
+        $('#twilioAccountSID').prop("disabled", true);
+        $('#twilioAuthToken').prop("disabled", true);
+        $('#twilioFrom').prop("disabled", true);
+        $('#twilioTo').prop("disabled", true);
+      }
+    });
+    </script>
   </body>
 </html>
