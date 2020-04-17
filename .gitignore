@@ -1,6 +1,7 @@
 .idea/
 t.jpg
 secret_settings.py
+app.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
