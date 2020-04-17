@@ -42,7 +42,7 @@ class Recognizer:
         self.vs = None
         self.delay_cache = {}
         self.delay_cache_threshold = 100
-        #self.messenger = TwilioClient(account_sid, auth_token)
+        self.messenger = TwilioClient(account_sid, auth_token)
         self.default_message = "Whodat? It looks like: "
 
     def face_trigger(self, name):
@@ -55,7 +55,7 @@ class Recognizer:
             # if time diff greater than some threshold, send message
         else:
             self.delay_cache[name] = time.time()
-            #message = self.messenger.messages.create(body=self.default_message+name, from_=from_number, to=to_number)
+            message = self.messenger.messages.create(body=self.default_message+name, from_=from_number, to=to_number)
 
     def run(self):
         print("loading encodings + face detector...")
