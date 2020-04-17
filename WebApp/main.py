@@ -28,7 +28,7 @@ auth_token = ""
 from_number = ""
 to_number = ""
 
-RUN_CAMERA = False
+RUN_CAMERA = True
 lock = threading.Lock()
 outputFrame = None
 
@@ -42,7 +42,7 @@ class Recognizer:
         self.vs = None
         self.delay_cache = {}
         self.delay_cache_threshold = 100
-        self.messenger = TwilioClient(account_sid, auth_token)
+        self.messenger = None
         self.default_message = "Whodat? It looks like: "
 
     def face_trigger(self, name):
@@ -55,7 +55,11 @@ class Recognizer:
             # if time diff greater than some threshold, send message
         else:
             self.delay_cache[name] = time.time()
-            message = self.messenger.messages.create(body=self.default_message+name, from_=from_number, to=to_number)
+            if os.path.isfile('twilio.json'):
+                self.messenger = TwilioClient(account_sid, auth_token)
+                self.messenger.messages.create(body=self.default_message + name, from_=from_number, to=to_number)
+            else:
+                print("Add your Twilio credentials to start sending messages")
 
     def run(self):
         print("loading encodings + face detector...")
@@ -144,7 +148,7 @@ def upload_file():
         return redirect(url_for('home'))
 
 
-@app.route('/' ,methods=['GET','POST'])
+@app.route('/', methods=['GET','POST'])
 def home():
     global account_sid
     global auth_token
@@ -158,9 +162,10 @@ def home():
         twilioJSON("write")
     return render_template("index.html",account = account_sid, token = auth_token, fromN = from_number, toN = to_number)
 
+
 @app.route('/twilio', methods = ['GET', 'POST'])
 def twilio():
-    #if request.method != 'GET':
+    # if request.method != 'GET':
     flash('Twilio Settings Updated', 'info')
     return render_template("twilio.html", account_sid)
 
@@ -184,35 +189,42 @@ def video_feed():
         filename = 'static/WHODAT_Title3.png'
         return send_file(filename, mimetype='image/jpg')
 
+
 def twilioJSON(operation):
     global account_sid
     global auth_token
     global from_number
     global to_number
-    if (operation == "read"):
+    if operation == "read":
         with open('twilio.json', 'r') as twilioFile:
             data = twilioFile.read()
-            twilioObject = json.loads(data)
-            account_sid = twilioObject['account_sid']
-            auth_token = twilioObject['auth_token']
-            from_number = twilioObject['from_number']
-            to_number = twilioObject['to_number']
+            twilio_object = json.loads(data)
+            account_sid = twilio_object['account_sid']
+            auth_token = twilio_object['auth_token']
+            from_number = twilio_object['from_number']
+            to_number = twilio_object['to_number']
 
-    if (operation == "write"):
-        with open('twilio.json','w') as twilioFile:
-            json.dump({"account_sid":account_sid, "auth_token":auth_token , "from_number":from_number , "to_number":to_number}, twilioFile)
+    if operation == "write":
+        with open('twilio.json', 'w') as twilioFile:
+            json.dump({"account_sid": account_sid, "auth_token": auth_token,
+                       "from_number": from_number, "to_number": to_number}, twilioFile)
 
-if os.path.exists('twilio.json'):
-    twilioJSON("read")
-else:
-    twilioJSON("write")
 
 if __name__ == "__main__":
+    # setup
+    if os.path.isfile('twilio.json'):
+        twilioJSON("read")
+    else:
+        twilioJSON("write")
+
+    # start
     if RUN_CAMERA:
         agent = Recognizer()
         t = threading.Thread(target=agent.run)
         t.daemon = True
         t.start()
     app.run(debug=True, threaded=True, use_reloader=False, host='0.0.0.0')  # host='0.0.0.0' keyword to access on another machine
+
+    # end
     if RUN_CAMERA:
         agent.vs.stream.release()

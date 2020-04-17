@@ -2,6 +2,7 @@
 t.jpg
 secret_settings.py
 app.py
+twilio.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
