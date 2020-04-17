@@ -1,5 +1,5 @@
 from flask import Flask as fl
-from flask import Response, redirect, url_for, render_template, request
+from flask import Response, redirect, url_for, render_template, request, send_file
 import cv2
 from imutils.video import VideoStream
 from imutils.video import FPS
@@ -11,10 +11,9 @@ import time
 import cv2
 import threading
 import time
-from flask import send_file
 import os
+import json
 from twilio.rest import Client as TwilioClient
-#from secret_settings import account_sid, auth_token, from_number, to_number
 
 app = fl(__name__)
 
@@ -24,6 +23,10 @@ video_stream = None
 # Globals
 global outputFrame, lock
 global RUN_CAMERA
+account_sid = ""
+auth_token = ""
+from_number = ""
+to_number = ""
 
 RUN_CAMERA = False
 lock = threading.Lock()
@@ -141,9 +144,25 @@ def upload_file():
         return redirect(url_for('home'))
 
 
-@app.route('/')
+@app.route('/' ,methods=['GET','POST'])
 def home():
-    return render_template("index.html")
+    global account_sid
+    global auth_token
+    global from_number
+    global to_number
+    if request.method == 'POST':
+        account_sid = request.form.get('twilioAccountSID')
+        auth_token = request.form.get('twilioAuthToken')
+        from_number = request.form.get('twilioFrom')
+        to_number = request.form.get('twilioTo')
+        twilioJSON("write")
+    return render_template("index.html",account = account_sid, token = auth_token, fromN = from_number, toN = to_number)
+
+@app.route('/twilio', methods = ['GET', 'POST'])
+def twilio():
+    #if request.method != 'GET':
+    flash('Twilio Settings Updated', 'info')
+    return render_template("twilio.html", account_sid)
 
 
 def gen():
@@ -165,6 +184,28 @@ def video_feed():
         filename = 'static/WHODAT_Title3.png'
         return send_file(filename, mimetype='image/jpg')
 
+def twilioJSON(operation):
+    global account_sid
+    global auth_token
+    global from_number
+    global to_number
+    if (operation == "read"):
+        with open('twilio.json', 'r') as twilioFile:
+            data = twilioFile.read()
+            twilioObject = json.loads(data)
+            account_sid = twilioObject['account_sid']
+            auth_token = twilioObject['auth_token']
+            from_number = twilioObject['from_number']
+            to_number = twilioObject['to_number']
+
+    if (operation == "write"):
+        with open('twilio.json','w') as twilioFile:
+            json.dump({"account_sid":account_sid, "auth_token":auth_token , "from_number":from_number , "to_number":to_number}, twilioFile)
+
+if os.path.exists('twilio.json'):
+    twilioJSON("read")
+else:
+    twilioJSON("write")
 
 if __name__ == "__main__":
     if RUN_CAMERA:
@@ -172,6 +213,6 @@ if __name__ == "__main__":
         t = threading.Thread(target=agent.run)
         t.daemon = True
         t.start()
-    app.run(debug=True, threaded=True, use_reloader=False)  # host='0.0.0.0' keyword to access on another machine
+    app.run(debug=True, threaded=True, use_reloader=False, host='0.0.0.0')  # host='0.0.0.0' keyword to access on another machine
     if RUN_CAMERA:
         agent.vs.stream.release()
