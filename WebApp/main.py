@@ -133,11 +133,6 @@ class Recognizer:
                     outputFrame = frame.copy()
 
 
-# Not currently working ?
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-
 @app.route('/upload_file', methods=['POST'])
 def upload_file():
         if 'photo' in request.files:
@@ -159,24 +154,7 @@ def home():
         from_number = request.form.get('twilioFrom')
         to_number = request.form.get('twilioTo')
         twilioJSON("write")
-    return render_template("index.html",account = account_sid, token = auth_token, fromN = from_number, toN = to_number)
-
-
-@app.route('/twilio', methods = ['GET', 'POST'])
-def twilio():
-    # if request.method != 'GET':
-    flash('Twilio Settings Updated', 'info')
-    return render_template("twilio.html", account_sid)
-
-
-def gen():
-    global outputFrame
-    while True:
-        (flag, encodedImage) = cv2.imencode(".jpg", outputFrame)
-        if not flag:
-            continue
-        yield (b'--frame\r\n'
-               b'Content-Type: image/jpeg\r\n\r\n' + bytearray(encodedImage) + b'\r\n')
+    return render_template("index.html", account=account_sid, token=auth_token, fromN=from_number, toN=to_number)
 
 
 @app.route('/video_feed')
@@ -187,6 +165,16 @@ def video_feed():
     else:
         filename = 'static/WHODAT_Title3.png'
         return send_file(filename, mimetype='image/jpg')
+
+
+def gen():
+    global outputFrame
+    while True:
+        (flag, encodedImage) = cv2.imencode(".jpg", outputFrame)
+        if not flag:
+            continue
+        yield (b'--frame\r\n'
+               b'Content-Type: image/jpeg\r\n\r\n' + bytearray(encodedImage) + b'\r\n')
 
 
 def twilioJSON(operation):
@@ -207,6 +195,11 @@ def twilioJSON(operation):
         with open('twilio.json', 'w') as twilioFile:
             json.dump({"account_sid": account_sid, "auth_token": auth_token,
                        "from_number": from_number, "to_number": to_number}, twilioFile)
+
+
+# Not currently working ?
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
 if __name__ == "__main__":
