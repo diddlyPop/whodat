@@ -1,30 +1,31 @@
 <!doctype html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <title>WhoDat</title>
-  </head>
-  <body style='background-color: #F3F3F3'>
-    <div class="container-fluid text-center bg-dark">
-      <img src="{{url_for('static', filename='WHODAT_Title3_small.png')}}"/>
-    </div>
-    <h1 class="text-center p-3">Welcome to WhoDat</h1>
+</head>
+<body style='background-color: #F3F3F3'>
+<div class="container-fluid text-center bg-dark">
+    <img src="{{url_for('static', filename='WHODAT_Title3_small.png')}}"/>
+</div>
+<h1 class="text-center p-3">Welcome to WhoDat</h1>
 
-    <div class="container">
-      <div class="row">
+<div class="container">
+    <div class="row">
         <div class="col-md">
-          <h3>Live Feed:</h3>
-          <img style='width: 100%' class="bg-dark" id="video" src="{{ url_for('video_feed') }}"/>
-          <br></br>
-          <h3>Last Identified:</h3>
-          <p>John Smith at 10:00 PM</p>
+            <h3>Live Feed:</h3>
+            <img style='width: 100%' class="bg-dark" id="video" src="{{ url_for('video_feed') }}"/>
+            <br></br>
+            <h3>Last Identified:</h3>
+            <p>John Smith at 10:00 PM</p>
         </div>
         <div class="col-md">
-          <h3>Settings:</h3>
+            <h3>Settings:</h3>
 
-          <style>
+            <style>
             .nav-tabs .nav-link{
               color: gray;
             }
@@ -33,69 +34,101 @@
               background-color: #FFC107!important;
               color: black!important;
             }
-          </style>
 
-          <!--https://getbootstrap.com/docs/4.0/components/navs/-->
-          <nav>
-            <div class="nav nav-tabs nav-justified" id="nav-tab" role="tablist">
-            	<a class="nav-item nav-link" id="nav-configuration-tab" data-toggle="tab" href="#nav-configuration" role="tab" aria-controls="nav-configuration" aria-selected="true">Configuration</a>
-            	<a class="nav-item nav-link active" id="nav-twilio-tab" data-toggle="tab" href="#nav-twilio" role="tab" aria-controls="nav-twilio" aria-selected="false">Twilio</a>
-            	<a class="nav-item nav-link" id="nav-about-tab" data-toggle="tab" href="#nav-about" role="tab" aria-controls="nav-about" aria-selected="false">About</a>
-            </div>
-          </nav>
+            </style>
 
-          <div class="tab-content pt-2" id="pills-tabContent">
-
-            <div class="tab-pane fade " id="nav-configuration" role="tabpanel" aria-labelledby="nav-configuration-tab">
-              <p>Look! Here is a button!</p>
-              <button type="button" class="btn btn-secondary">Train</button>
-            </div>
-
-            <div class="tab-pane fade show active" id="nav-twilio" role="tabpanel" aria-labelledby="nav-twilio-tab">
-              <p>Enter your Twilio account to receive message updates from WhoDat:</p>
-
-              <form method='POST'>
-                <div class="form-group">
-                  <label for="twilioAccountSID">Account SID:</label>
-                  <input type="text" class="form-control" id="twilioAccountSID" name="twilioAccountSID" value={{account}}>
+            <!--https://getbootstrap.com/docs/4.0/components/navs/-->
+            <nav>
+                <div class="nav nav-tabs nav-justified" id="nav-tab" role="tablist">
+                    <a class="nav-item nav-link" id="nav-configuration-tab" data-toggle="tab" href="#nav-configuration"
+                       role="tab" aria-controls="nav-configuration" aria-selected="true">Configuration</a>
+                    <a class="nav-item nav-link active" id="nav-twilio-tab" data-toggle="tab" href="#nav-twilio"
+                       role="tab" aria-controls="nav-twilio" aria-selected="false">Twilio</a>
+                    <a class="nav-item nav-link" id="nav-about-tab" data-toggle="tab" href="#nav-about" role="tab"
+                       aria-controls="nav-about" aria-selected="false">About</a>
+                    <a class="nav-item nav-link" id="nav-upload-tab" data-toggle="tab" href="#nav-upload" role="tab"
+                       aria-controls="nav-upload" aria-selected="false" style="font-size: 12px;">Upload</a>
                 </div>
-                <div class="form-group">
-                  <label for="twilioAuthToken">Auth Token:</label>
-                  <input type="text" class="form-control" id="twilioAuthToken" name="twilioAuthToken" value={{token}}>
-                </div>
-                <div class="form-group">
-                  <label for="twilioFrom">From Number:</label>
-                  <input type="text" class="form-control" id="twilioFrom" name="twilioFrom" value={{fromN}}>
-                </div>
-                <div class="form-group">
-                  <label for="twilioTo">To Number:</label>
-                  <input type="text" class="form-control" id="twilioTo" name="twilioTo" value={{toN}}>
-                </div>
-                <button type="submit" class="btn btn-secondary" onclick=showTwilioMessage()>Apply</button>
-                <p></p>
-                <div class="alert alert-warning alert-dismissible fade" role="alert">
-                  <p>Your Twilio Settings have been updated!</p>
-                  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
-                </div>
-              </form>
-            </div>
+            </nav>
 
-              <div class="tab-pane fade" id="nav-about" role="tabpanel" aria-labelledby="nav-about-tab">
-                <p>WhoDat was designed by a team of 6 students to practice machine learning with Python. Their implementation allows you to use your Raspberry PI as a facial recognition system.</p>
-              </div>
+            <div class="tab-content pt-2" id="pills-tabContent">
+
+                <div class="tab-pane fade " id="nav-configuration" role="tabpanel"
+                     aria-labelledby="nav-configuration-tab">
+                    <p>Look! Here is a button!</p>
+                    <button type="button" class="btn btn-secondary">Train</button>
+                </div>
+
+                <div class="tab-pane fade show active" id="nav-twilio" role="tabpanel" aria-labelledby="nav-twilio-tab">
+                    <p>Enter your Twilio account to receive message updates from WhoDat:</p>
+
+                    <form method='POST'>
+                        <div class="form-group">
+                            <label for="twilioAccountSID">Account SID:</label>
+                            <input type="text" class="form-control" id="twilioAccountSID" name="twilioAccountSID"
+                                   value={{account}}>
+                        </div>
+                        <div class="form-group">
+                            <label for="twilioAuthToken">Auth Token:</label>
+                            <input type="text" class="form-control" id="twilioAuthToken" name="twilioAuthToken"
+                                   value={{token}}>
+                        </div>
+                        <div class="form-group">
+                            <label for="twilioFrom">From Number:</label>
+                            <input type="text" class="form-control" id="twilioFrom" name="twilioFrom" value={{fromN}}>
+                        </div>
+                        <div class="form-group">
+                            <label for="twilioTo">To Number:</label>
+                            <input type="text" class="form-control" id="twilioTo" name="twilioTo" value={{toN}}>
+                        </div>
+                        <button type="submit" class="btn btn-secondary" onclick=showTwilioMessage()>Apply</button>
+                        <p></p>
+                        <div class="alert alert-warning alert-dismissible fade" role="alert">
+                            <p>Your Twilio Settings have been updated!</p>
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="tab-pane fade" id="nav-about" role="tabpanel" aria-labelledby="nav-about-tab">
+                    <p>WhoDat was designed by a team of 6 students to practice machine learning with Python. Their
+                        implementation allows you to use your Raspberry PI as a facial recognition system.</p>
+                </div>
+                <div class="tab-pane fade" id="nav-upload" role="tabpanel" aria-labelledby="nav-upload-tab">
+                    <form action="/upload_file" method='post' enctype='multipart/form-data'>
+                        <p>Upload file here:</p>
+                        <div class="input-group">
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" id="inputGroupFile04"
+                                       aria-describedby="inputGroupFileAddon04" name="photo">
+                                <label class="custom-file-label" for="inputGroupFile04">Choose file</label>
+                            </div>
+                            <div class="input-group-append">
+                                <input type="submit" value="Upload" id="inputGroupFileAddon04"/>
+                            </div>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
-      </div>
     </div>
-    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-    <script>
+</div>
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+        integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+        integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+        crossorigin="anonymous"></script>
+<script>
     function showTwilioMessage() {
       alert("Twilio settings updated")
     }
-    </script>
-  </body>
+
+</script>
+</body>
 </html>

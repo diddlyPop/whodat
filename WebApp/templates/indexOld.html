@@ -26,14 +26,19 @@
 <br>
 <hr>
 <nav>
-		<div class="nav nav-tabs nav-justified" id="nav-tab" role="tablist">
-			<a class="nav-item nav-link active" id="nav-setup-tab" data-toggle="tab" href="#nav-setup" role="tab" aria-controls="nav-setup" aria-selected="true" style="font-size: 12px;">Setup</a>
-			<a class="nav-item nav-link" id="nav-train-tab" data-toggle="tab" href="#nav-train" role="tab" aria-controls="nav-train" aria-selected="false" style="font-size: 12px;">Train</a>
-			<a class="nav-item nav-link" id="nav-twilio-tab" data-toggle="tab" href="#nav-twilio" role="tab" aria-controls="nav-twilio" aria-selected="false" style="font-size: 12px;">Twilio</a>
-			<a class="nav-item nav-link" id="nav-upload-tab" data-toggle="tab" href="#nav-upload" role="tab" aria-controls="nav-upload" aria-selected="false" style="font-size: 12px;">Upload</a>
-			<a class="nav-item nav-link" id="nav-about-tab" data-toggle="tab" href="#nav-about" role="tab" aria-controls="nav-about" aria-selected="false" style="font-size: 12px;">About</a>
-		</div>
-	</nav>
+    <div class="nav nav-tabs nav-justified" id="nav-tab" role="tablist">
+        <a class="nav-item nav-link active" id="nav-setup-tab" data-toggle="tab" href="#nav-setup" role="tab"
+           aria-controls="nav-setup" aria-selected="true" style="font-size: 12px;">Setup</a>
+        <a class="nav-item nav-link" id="nav-train-tab" data-toggle="tab" href="#nav-train" role="tab"
+           aria-controls="nav-train" aria-selected="false" style="font-size: 12px;">Train</a>
+        <a class="nav-item nav-link" id="nav-twilio-tab" data-toggle="tab" href="#nav-twilio" role="tab"
+           aria-controls="nav-twilio" aria-selected="false" style="font-size: 12px;">Twilio</a>
+        <a class="nav-item nav-link" id="nav-upload-tab" data-toggle="tab" href="#nav-upload" role="tab"
+           aria-controls="nav-upload" aria-selected="false" style="font-size: 12px;">Upload</a>
+        <a class="nav-item nav-link" id="nav-about-tab" data-toggle="tab" href="#nav-about" role="tab"
+           aria-controls="nav-about" aria-selected="false" style="font-size: 12px;">About</a>
+    </div>
+</nav>
 <div class="tab-content" id="nav-tabContent">
     <div class="tab-pane fade show active" id="nav-setup" role="tabpanel" aria-labelledby="nav-setup-tab"><p>Configure
         settings and finalize setup</p></div>
@@ -59,8 +64,8 @@
 
         <button type="button" class="btn btn-primary">Submit</button>
     </div>
-        <div class="tab-pane fade" id="nav-upload" role="tabpanel" aria-labelledby="nav-upload-tab">
-<form action="/upload_file" method='post' enctype='multipart/form-data'>
+    <div class="tab-pane fade" id="nav-upload" role="tabpanel" aria-labelledby="nav-upload-tab">
+        <form action="/upload_file" method='post' enctype='multipart/form-data'>
             <p>Upload file here:</p>
             <div class="input-group">
                 <div class="custom-file">
@@ -72,8 +77,8 @@
                     <input type="submit" value="Upload" id="inputGroupFileAddon04"/>
                 </div>
             </div>
-</form>
-        </div>
+        </form>
+    </div>
     <div class="tab-pane fade" id="nav-about" role="tabpanel" aria-labelledby="nav-about-tab">WhoDat was designed by a
         group of 6 students to practice machine learning with python, the use of APIs and linking hardware with
         software. Their implementation allows you to use your raspberry pi as a facial recognition system. To get

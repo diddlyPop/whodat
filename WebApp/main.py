@@ -28,7 +28,7 @@ auth_token = ""
 from_number = ""
 to_number = ""
 
-RUN_CAMERA = True
+RUN_CAMERA = False
 lock = threading.Lock()
 outputFrame = None
 
@@ -144,7 +144,6 @@ def upload_file():
             photo = request.files['photo']
             if photo.filename != '':  # and allowed_file(photo)
                 photo.save(os.path.join('../assets/profiles', photo.filename))
-
         return redirect(url_for('home'))
 
 
