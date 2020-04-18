@@ -142,7 +142,7 @@ def upload_file():
         return redirect(url_for('home'))
 
 
-@app.route('/', methods=['GET','POST'])
+@app.route('/', methods=['GET', 'POST'])
 def home():
     global account_sid
     global auth_token
