@@ -1,21 +1,22 @@
-from flask import Flask as fl
+from flask import Flask as Fl
 from flask import Response, redirect, url_for, render_template, request, send_file
-import cv2
 from imutils.video import VideoStream
 from imutils.video import FPS
 from imutils import paths
 import face_recognition
 import imutils
 import pickle
-import time
 import cv2
 import threading
 import time
 import os
 import json
 from twilio.rest import Client as TwilioClient
+from datetime import datetime
+import pytz
+from pytz import timezone
 
-app = fl(__name__)
+app = Fl(__name__)
 
 # This is a necessary step to load the var, but wait to initiate
 video_stream = None
@@ -92,10 +93,12 @@ class Recognizer:
     def face_trigger(self, name):
         print(f"Recognized {name}")
         if name in self.delay_cache:
+            last_seen = get_pst()
             diff = time.time() - self.delay_cache[name]
-            print(f"Last seen {diff} seconds ago")
+            print(f"{name} last seen at {last_seen}")
             if diff > self.delay_cache_threshold:
                 print("RESET DELAY CACHE FOR THIS NAME")
+                self.delay_cache[name] = time.time()
             # if time diff greater than some threshold, send message
         else:
             self.delay_cache[name] = time.time()
@@ -194,11 +197,13 @@ def start_training():
 
 @app.route('/upload_file', methods=['POST'])
 def upload_file():
-        if 'photo' in request.files:
-            photo = request.files['photo']
-            if photo.filename != '':  # and allowed_file(photo)
-                photo.save(os.path.join('../assets/profiles', photo.filename))
-        return redirect(url_for('home'))
+    if 'photo' in request.files:
+        photo = request.files['photo']
+        first_n = request.files['first_name']
+        last_n = request.files['last_name']
+        if photo.filename != '':  # and allowed_file(photo)
+            photo.save(os.path.join(('../assets/profiles/' + first_n + '_' + last_n), photo.filename))
+    return redirect(url_for('home'))
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -258,6 +263,13 @@ def twilioJSON(operation):
 # Not currently working ?
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+def get_pst():
+    last_seen = datetime.now(tz=pytz.utc)
+    last_seen = last_seen.astimezone(timezone('US/Pacific'))
+    last_seen = last_seen.strftime("%H:%M on %m/%d/%Y")
+    return last_seen
 
 
 if __name__ == "__main__":

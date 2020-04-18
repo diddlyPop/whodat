@@ -35,6 +35,7 @@
               color: black!important;
             }
 
+
             </style>
 
             <!--https://getbootstrap.com/docs/4.0/components/navs/-->
@@ -54,21 +55,29 @@
                 <div class="tab-pane fade " id="nav-configuration" role="tabpanel"
                      aria-labelledby="nav-configuration-tab">
                     <p>Look! Here is a button!</p>
-                    <button type="button" class="btn btn-secondary">Train</button>
                     <form action="/start_training" method='post' enctype='multipart/form-data'>
                         <button type="submit" class="btn btn-secondary">Train</button>
                     </form>
-                    <form action="/upload_file" method='post' enctype='multipart/form-data'>
-                        <p>Upload file here:</p>
-                        <div class="input-group">
-                            <div class="custom-file">
-                                <input type="file" class="custom-file-input" id="inputGroupFile04"
-                                       aria-describedby="inputGroupFileAddon04" name="photo">
-                                <label class="custom-file-label" for="inputGroupFile04">Choose file</label>
-                            </div>
-                            <div class="input-group-append">
-                                <input type="submit" value="Upload" id="inputGroupFileAddon04"/>
-                            </div>
+                    <form method='POST'>
+                        <div class="form-group">
+                            <label for="chosenFile">File:</label>
+                            <input type="file" class="form-control" id="chosenFile" name="chosenFile" value={{file}}>
+                        </div>
+                        <div class="form-group">
+                            <label for="first_name">First Name:</label>
+                            <input type="text" class="form-control" id="first_name" name="first_name" value={{first}}>
+                        </div>
+                        <div class="form-group">
+                            <label for="last_name">Last Name:</label>
+                            <input type="text" class="form-control" id="last_name" name="last_name" value={{last}}>
+                        </div>
+                        <button type="submit" class="btn btn-secondary" onclick=showUploadMessage()>Upload</button>
+                        <p></p>
+                        <div class="alert alert-warning alert-dismissible fade" role="alert">
+                            <p>Your file has been uploaded!</p>
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
                         </div>
                     </form>
                 </div>
@@ -127,6 +136,10 @@
     function showTwilioMessage() {
       alert("Twilio settings updated")
     }
+    function showUploadMessage() {
+      alert("File uploaded successfully")
+    }
+
 
 </script>
 </body>
