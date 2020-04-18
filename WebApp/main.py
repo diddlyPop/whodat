@@ -55,7 +55,7 @@ class Recognizer:
             # if time diff greater than some threshold, send message
         else:
             self.delay_cache[name] = time.time()
-            if os.path.isfile('twilio.json'):
+            if account_sid == "":
                 self.messenger = TwilioClient(account_sid, auth_token)
                 self.messenger.messages.create(body=self.default_message + name, from_=from_number, to=to_number)
             else:
