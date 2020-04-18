@@ -182,8 +182,9 @@ class Recognizer:
                     self.training_agent.encode()
 
 
-@app.route('/train', methods=['POST'])
-def train():
+@app.route('/start_training', methods=['POST'])
+def start_training():
+    global RUN_TRAINING
     RUN_TRAINING = True
 
 
@@ -196,7 +197,7 @@ def upload_file():
         return redirect(url_for('home'))
 
 
-@app.route('/', methods=['GET','POST'])
+@app.route('/', methods=['GET', 'POST'])
 def home():
     global account_sid
     global auth_token

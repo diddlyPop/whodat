@@ -55,6 +55,9 @@
                      aria-labelledby="nav-configuration-tab">
                     <p>Look! Here is a button!</p>
                     <button type="button" class="btn btn-secondary">Train</button>
+                    <form action="/start_training" method='post' enctype='multipart/form-data'>
+                        <button type="submit" class="btn btn-secondary">Train</button>
+                    </form>
                     <form action="/upload_file" method='post' enctype='multipart/form-data'>
                         <p>Upload file here:</p>
                         <div class="input-group">
