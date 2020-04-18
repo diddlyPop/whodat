@@ -52,6 +52,8 @@ class Trainer:
         self.detection_method = 'hog'   # for better computers use 'cnn'
 
     def encode(self):
+        global RUN_TRAINING
+        global Training
         print("quantifying faces...")
         imagePaths = list(paths.list_images(self.dataset))
         knownEncodings = []
@@ -69,11 +71,11 @@ class Trainer:
                 knownNames.append(name)
         print("[INFO] serializing encodings...")
         data = {"encodings": knownEncodings, "names": knownNames}
-        f = open(encoding, "wb")
+        f = open(self.encodings, "wb")
         f.write(pickle.dumps(data))
         f.close()
         RUN_TRAINING = False
-        Training = False
+        TRAINING = False
 
 
 # Recognizer class handles facial recognition functionality
@@ -113,6 +115,7 @@ class Recognizer:
         fps = FPS().start()
         current_faces = {}
         global outputFrame
+        global TRAINING
         while True:
             if not RUN_TRAINING:
                 frame = self.vs.read()
@@ -186,6 +189,7 @@ class Recognizer:
 def start_training():
     global RUN_TRAINING
     RUN_TRAINING = True
+    return redirect(url_for('home'))
 
 
 @app.route('/upload_file', methods=['POST'])
@@ -223,7 +227,6 @@ def video_feed():
 
 
 def gen():
-    global outputFrame
     while True:
         (flag, encodedImage) = cv2.imencode(".jpg", outputFrame)
         if not flag:
