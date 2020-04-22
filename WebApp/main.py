@@ -28,11 +28,9 @@ global RUN_CAMERA
 global RUN_TRAINING, TRAINING
 
 # Twilio environments
-account_sid = ""
-auth_token = ""
-from_number = ""
-to_number = ""
+twilioSettingsJSON = None
 
+#Last Seen Message global
 lastSeenMessage = "No one has been seen, yet..."
 
 # training flags
@@ -222,17 +220,14 @@ def upload_file():
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
-    global account_sid
-    global auth_token
-    global from_number
-    global to_number
     if request.method == 'POST':
-        account_sid = request.form.get('twilioAccountSID')
-        auth_token = request.form.get('twilioAuthToken')
-        from_number = request.form.get('twilioFrom')
-        to_number = request.form.get('twilioTo')
-        twilioJSON("write")
-    return render_template("index.html", lastSeenMessage = seenMessage, account=account_sid, token=auth_token, fromN=from_number, toN=to_number)
+        if (request.form.get('submit') == "twilio"):
+            twilioJSON("write",request.form.get('twilioAccountSID'), request.form.get('twilioAuthToken'), request.form.get('twilioFrom'), request.form.get('twilioTo'))
+        elif (request.form.get('submit') == "upload"):
+            print("DD")
+        elif (request.form.get('submit') == "train"):
+            print("EE")
+    return render_template("index.html", seenMessage = lastSeenMessage, twilioSettings = twilioSettingsJSON)
 
 
 @app.route('/video_feed')
@@ -254,25 +249,23 @@ def gen():
                b'Content-Type: image/jpeg\r\n\r\n' + bytearray(encodedImage) + b'\r\n')
 
 
-def twilioJSON(operation):
-    global account_sid
-    global auth_token
-    global from_number
-    global to_number
+def twilioJSON(operation, accountSID, authToken, fromNumber, toNumber):
+    global twilioSettingsJSON
+
     if operation == "read":
         with open('twilio.json', 'r') as twilioFile:
             data = twilioFile.read()
-            twilio_object = json.loads(data)
-            account_sid = twilio_object['account_sid']
-            auth_token = twilio_object['auth_token']
-            from_number = twilio_object['from_number']
-            to_number = twilio_object['to_number']
-
-    if operation == "write":
+            twilioSettingsJSON = json.loads(data)
+    elif operation == "write":
+        twilioSettingsJSON['account_sid'] = accountSID
+        twilioSettingsJSON['auth_token'] = authToken
+        twilioSettingsJSON['from_number'] = fromNumber
+        twilioSettingsJSON['to_number'] = toNumber
         with open('twilio.json', 'w') as twilioFile:
-            json.dump({"account_sid": account_sid, "auth_token": auth_token,
-                       "from_number": from_number, "to_number": to_number}, twilioFile)
-
+            json.dump({"account_sid": accountSID, "auth_token": authToken,
+                       "from_number": fromNumber, "to_number": toNumber}, twilioFile)
+    else:
+        print("Invalid operation")
 
 def get_pst():
     last_seen = datetime.now(tz=pytz.utc)
@@ -283,7 +276,8 @@ def get_pst():
 #https://pythonise.com/series/learning-flask/python-before-after-request
 @app.before_first_request
 def before_first_request_func():
-    twilioJSON("read")
+    if (os.path.exists("twilio.json")):
+        twilioJSON("read", None, None, None, None)
 
 if __name__ == "__main__":
     # start
