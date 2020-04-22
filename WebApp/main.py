@@ -90,6 +90,9 @@ class Recognizer:
         self.default_message = "Whodat? It looks like: "
         self.training_agent = Trainer()
 
+        #experimental confidence variables
+        self.net = cv2.dnn.readNetFromCaffe("../assets/deploy.prototxt.txt", "../assets/res10_300x300_ssd_iter_140000.caffemodel")
+
     def face_trigger(self, name):
         print(f"Recognized {name}")
         if name in self.delay_cache:
@@ -122,68 +125,80 @@ class Recognizer:
         while True:
             if not RUN_TRAINING:
                 frame = self.vs.read()
-                frame = imutils.resize(frame, width=500)
+                frame_conf = frame
+                frame_conf = imutils.resize(frame_conf, width=400)
+                (h, w) = frame_conf.shape[:2]
+                blob = cv2.dnn.blobFromImage(cv2.resize(frame_conf, (300, 300)), 1.0,
+                                             (300, 300), (104.0, 177.0, 123.0))
+                self.net.setInput(blob)
+                detections = self.net.forward()
+                for i in range(0, detections.shape[2]):
+                    confidence = detections[0, 0, i, 2]
+                    if confidence >= .97:
+                        frame = imutils.resize(frame, width=500)
+                        # create greyscale and rgb/brg versions for detection
+                        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+                        rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                        # detection using greyscale
+                        rects = detector.detectMultiScale(gray, scaleFactor=1.1,
+                                                          minNeighbors=5, minSize=(30, 30),
+                                                          flags=cv2.CASCADE_SCALE_IMAGE)
+                        # OpenCV returns bounding box coordinates in (x, y, w, h) order
+                        # i reordered to (top, right, bottom, left)
+                        boxes = [(y, x + w, y + h, x) for (x, y, w, h) in rects]
+                        # compute the facial embeddings for each face bounding box
+                        encodings = face_recognition.face_encodings(rgb, boxes)
+                        names = []
 
-                # create greyscale and rgb/brg versions for detection
-                gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-                rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-                # detection using greyscale
-                rects = detector.detectMultiScale(gray, scaleFactor=1.1,
-                                                  minNeighbors=5, minSize=(30, 30),
-                                                  flags=cv2.CASCADE_SCALE_IMAGE)
-                # OpenCV returns bounding box coordinates in (x, y, w, h) order
-                # i reordered to (top, right, bottom, left)
-                boxes = [(y, x + w, y + h, x) for (x, y, w, h) in rects]
-                # compute the facial embeddings for each face bounding box
-                encodings = face_recognition.face_encodings(rgb, boxes)
-                names = []
+                        for encoding in encodings:
+                            # attempt to match each face in the input image to our known
+                            # encodings
+                            matches = face_recognition.compare_faces(data["encodings"],
+                                                                     encoding)
+                            name = "Unknown"
 
-                for encoding in encodings:
-                    # attempt to match each face in the input image to our known
-                    # encodings
-                    matches = face_recognition.compare_faces(data["encodings"],
-                                                             encoding)
-                    name = "Unknown"
-
-                    if True in matches:
-                        # index the faces and start a container to keep track of guesses
-                        matchedIdxs = [i for (i, b) in enumerate(matches) if b]
-                        counts = {}
-                        # count each time a face is seen
-                        for i in matchedIdxs:
-                            name = data["names"][i]
-                            counts[name] = counts.get(name, 0) + 1
-                        # choose the name with the highest probibility (# of votes of confidence) and append it
-                        name = max(counts, key=counts.get)
-                    names.append(name)
-                    # draw name and bounding boxes
-                    for ((top, right, bottom, left), name) in zip(boxes, names):
-                        cv2.rectangle(frame, (left, top), (right, bottom),
-                                      (167, 167, 167), 2)
-                        y = top - 15 if top - 15 > 15 else top + 15
-                        cv2.putText(frame, name, (left, y), cv2.FONT_HERSHEY_SIMPLEX,
-                                    0.75, (255, 255, 255), 2)
-                        if name in current_faces:
-                            current_faces[name] += 1
+                            if True in matches:
+                                # index the faces and start a container to keep track of guesses
+                                matchedIdxs = [i for (i, b) in enumerate(matches) if b]
+                                counts = {}
+                                # count each time a face is seen
+                                for i in matchedIdxs:
+                                    name = data["names"][i]
+                                    counts[name] = counts.get(name, 0) + 1
+                                # choose the name with the highest probibility (# of votes of confidence) and append it
+                                name = max(counts, key=counts.get)
+                            names.append(name)
+                            # draw name and bounding boxes
+                            for ((top, right, bottom, left), name) in zip(boxes, names):
+                                cv2.rectangle(frame, (left, top), (right, bottom),
+                                              (167, 167, 167), 2)
+                                y = top - 15 if top - 15 > 15 else top + 15
+                                cv2.putText(frame, str(name)+str(confidence), (left, y), cv2.FONT_HERSHEY_SIMPLEX,
+                                            0.75, (255, 255, 255), 2)
+                                if name in current_faces:
+                                    current_faces[name] += 1
+                                else:
+                                    current_faces[name] = 1
+                                if current_faces[name] == 20:
+                                    self.face_trigger(name)
+                                    current_faces.clear()
                         else:
-                            current_faces[name] = 1
-                        if current_faces[name] == 20:
-                            self.face_trigger(name)
                             current_faces.clear()
-                else:
-                    current_faces.clear()
-                if self.DRAW_FRAMES:
-                    cv2.imshow("Frame", frame)
-                    key = cv2.waitKey(1) & 0xFF
+                    else:
+                        current_faces.clear()
+                    if self.DRAW_FRAMES:
+                        cv2.imshow("Frame", frame)
+                        key = cv2.waitKey(1) & 0xFF
 
-                    if key == ord("q"):
-                        break
-                    fps.update()
-                else:
-                    with lock:
-                        outputFrame = frame.copy()
+                        if key == ord("q"):
+                            break
+                        fps.update()
+                    else:
+                        with lock:
+                            outputFrame = frame.copy()
             else:
                 if not TRAINING:
+                    current_faces.clear()
                     TRAINING = True
                     self.training_agent.encode()
 
