@@ -20,7 +20,7 @@
             <img style='width: 100%' class="bg-dark" id="video" src="{{ url_for('video_feed') }}"/>
             <br></br>
             <h3>Last Identified:</h3>
-            <p>John Smith at 10:00 PM</p>
+            <p>{{ seenMessage }}</p>
         </div>
         <div class="col-md">
             <h3>Settings:</h3>
@@ -54,14 +54,13 @@
 
                 <div class="tab-pane fade " id="nav-configuration" role="tabpanel"
                      aria-labelledby="nav-configuration-tab">
-                    <p>Look! Here is a button!</p>
                     <form action="/start_training" method='post' enctype='multipart/form-data'>
                         <button type="submit" class="btn btn-secondary">Train</button>
                     </form>
                     <form method='POST'>
                         <div class="form-group">
                             <label for="chosenFile">File:</label>
-                            <input type="file" class="form-control" id="chosenFile" name="chosenFile" value={{file}}>
+                            <input type="file" accept=".jpeg,.jpg,.png" class="form-control" id="chosenFile" name="chosenFile" value={{file}}>
                         </div>
                         <div class="form-group">
                             <label for="first_name">First Name:</label>
@@ -72,13 +71,6 @@
                             <input type="text" class="form-control" id="last_name" name="last_name" value={{last}}>
                         </div>
                         <button type="submit" class="btn btn-secondary" onclick=showUploadMessage()>Upload</button>
-                        <p></p>
-                        <div class="alert alert-warning alert-dismissible fade" role="alert">
-                            <p>Your file has been uploaded!</p>
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
                     </form>
                 </div>
 
@@ -88,30 +80,23 @@
                     <form method='POST'>
                         <div class="form-group">
                             <label for="twilioAccountSID">Account SID:</label>
-                            <input type="text" class="form-control" id="twilioAccountSID" name="twilioAccountSID"
+                            <input type="text" class="form-control" id="twilioAccountSID" name="twilioAccountSID" required
                                    value={{account}}>
                         </div>
                         <div class="form-group">
                             <label for="twilioAuthToken">Auth Token:</label>
-                            <input type="text" class="form-control" id="twilioAuthToken" name="twilioAuthToken"
+                            <input type="text" class="form-control" id="twilioAuthToken" name="twilioAuthToken" required
                                    value={{token}}>
                         </div>
                         <div class="form-group">
                             <label for="twilioFrom">From Number:</label>
-                            <input type="text" class="form-control" id="twilioFrom" name="twilioFrom" value={{fromN}}>
+                            <input type="text" class="form-control" id="twilioFrom" name="twilioFrom" required value={{fromN}}>
                         </div>
                         <div class="form-group">
                             <label for="twilioTo">To Number:</label>
-                            <input type="text" class="form-control" id="twilioTo" name="twilioTo" value={{toN}}>
+                            <input type="text" class="form-control" id="twilioTo" name="twilioTo" required value={{toN}}>
                         </div>
                         <button type="submit" class="btn btn-secondary" onclick=showTwilioMessage()>Apply</button>
-                        <p></p>
-                        <div class="alert alert-warning alert-dismissible fade" role="alert">
-                            <p>Your Twilio Settings have been updated!</p>
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
                     </form>
                 </div>
 

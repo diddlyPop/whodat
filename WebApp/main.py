@@ -13,7 +13,7 @@ import os
 import json
 from twilio.rest import Client as TwilioClient
 from datetime import datetime
-import pytz
+#import pytz
 from pytz import timezone
 
 app = Fl(__name__)
@@ -33,10 +33,12 @@ auth_token = ""
 from_number = ""
 to_number = ""
 
+lastSeenMessage = "No one has been seen, yet..."
+
 # training flags
 RUN_TRAINING, TRAINING = False, False
 # manually change to use camera during runtime
-RUN_CAMERA = True
+RUN_CAMERA = False
 # thread lock
 lock = threading.Lock()
 # current frame to be displayed
@@ -240,10 +242,10 @@ def home():
 def video_feed():
     # Global RUN_CAMERA used for determining current program state (if camera is needed)
     if RUN_CAMERA:
-        return Response(gen(), mimetype='multipart/x-mixed-replace; boundary=frame')
+        return Response(gen(), mimetype='multipart/x-mixed-replace; boundary=frame', headers='cache_control.max_age=0')
     else:
         filename = 'static/WHODAT_Title3.png'
-        return send_file(filename, mimetype='image/jpg')
+        return send_file(filename, mimetype='image/jpg',cache_timeout=0)
 
 
 def gen():
@@ -275,25 +277,18 @@ def twilioJSON(operation):
                        "from_number": from_number, "to_number": to_number}, twilioFile)
 
 
-# Not currently working ?
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-
 def get_pst():
     last_seen = datetime.now(tz=pytz.utc)
     last_seen = last_seen.astimezone(timezone('US/Pacific'))
     last_seen = last_seen.strftime("%H:%M on %m/%d/%Y")
     return last_seen
 
+#https://pythonise.com/series/learning-flask/python-before-after-request
+@app.before_first_request
+def before_first_request_func():
+    twilioJSON(read)
 
 if __name__ == "__main__":
-    # setup
-    if os.path.isfile('twilio.json'):
-        twilioJSON("read")
-    else:
-        twilioJSON("write")
-
     # start
     if RUN_CAMERA:
         agent = Recognizer()
