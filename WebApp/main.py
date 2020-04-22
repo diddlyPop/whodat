@@ -44,9 +44,6 @@ lock = threading.Lock()
 # current frame to be displayed
 outputFrame = None
 
-ALLOWED_EXTENSIONS = {'jpeg', 'jpg', 'png'}
-
-
 # Trainer class handles encoding from images
 class Trainer:
     def __init__(self):
@@ -235,7 +232,7 @@ def home():
         from_number = request.form.get('twilioFrom')
         to_number = request.form.get('twilioTo')
         twilioJSON("write")
-    return render_template("index.html", account=account_sid, token=auth_token, fromN=from_number, toN=to_number)
+    return render_template("index.html", lastSeenMessage = seenMessage, account=account_sid, token=auth_token, fromN=from_number, toN=to_number)
 
 
 @app.route('/video_feed')
@@ -286,7 +283,7 @@ def get_pst():
 #https://pythonise.com/series/learning-flask/python-before-after-request
 @app.before_first_request
 def before_first_request_func():
-    twilioJSON(read)
+    twilioJSON("read")
 
 if __name__ == "__main__":
     # start
