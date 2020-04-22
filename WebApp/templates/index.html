@@ -54,23 +54,29 @@
 
                 <div class="tab-pane fade show active" id="nav-configuration" role="tabpanel"
                      aria-labelledby="nav-configuration-tab">
-                    <form action="/start_training" method='post' enctype='multipart/form-data'>
-                        <button type="submit" class="btn btn-secondary">Train</button>
-                    </form>
+
                     <form method='POST'>
-                        <div class="form-group">
-                            <label for="chosenFile">File:</label>
-                            <input type="file" accept=".jpeg,.jpg,.png" class="form-control" id="chosenFile" name="chosenFile" value={{file}}>
+                      <div class="form-row">
+                        <div class="col-md mb-3">
+                          <label for="first_name">First Name:</label>
+                          <input type="text" class="form-control" id="first_name" name="first_name" value={{first}}>
                         </div>
-                        <div class="form-group">
-                            <label for="first_name">First Name:</label>
-                            <input type="text" class="form-control" id="first_name" name="first_name" value={{first}}>
+                          <div class="col-md mb-3">
+                          <label for="last_name">Last Name:</label>
+                          <input type="text" class="form-control" id="last_name" name="last_name" value={{last}}>
                         </div>
-                        <div class="form-group">
-                            <label for="last_name">Last Name:</label>
-                            <input type="text" class="form-control" id="last_name" name="last_name" value={{last}}>
-                        </div>
-                        <button type="submit" class="btn btn-secondary" onclick=showUploadMessage()>Upload</button>
+                      </div>
+
+                      <div class="custom-file mb-3">
+                        <input type="file" accept=".jpeg,.jpg,.png" class="custom-file-input" id="chosenFile">
+                        <label class="custom-file-label" for="inputGroupFile02">Choose file</label>
+                      </div>
+                      <button type="submit" class="btn btn-secondary mb-3" name="submit" value="upload" onclick=showUploadMessage()>Upload</button>
+                    </form>
+
+                    <p>Afer uploading the photos, use this button to start training.</p>
+                    <form method='POST'>
+                        <button type="submit" class="btn btn-secondary" name="submit" value="train" onclick="=showTrainingMessage()">Train</button>
                     </form>
                 </div>
 
@@ -124,8 +130,9 @@
     function showUploadMessage() {
       alert("File uploaded successfully")
     }
-
-
+    function showTrainingMessage() {
+      alert("Training button has been clicked, CHANGE ME")
+    }
 </script>
 </body>
 </html>
