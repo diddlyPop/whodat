@@ -13,7 +13,6 @@ import os
 import json
 from twilio.rest import Client as TwilioClient
 from datetime import datetime
-#import pytz
 from pytz import timezone
 
 app = Fl(__name__)
@@ -36,7 +35,7 @@ lastSeenMessage = "No one has been seen, yet..."
 # training flags
 RUN_TRAINING, TRAINING = False, False
 # manually change to use camera during runtime
-RUN_CAMERA = False
+RUN_CAMERA = True
 # thread lock
 lock = threading.Lock()
 # current frame to be displayed
@@ -45,7 +44,7 @@ outputFrame = None
 # Trainer class handles encoding from images
 class Trainer:
     def __init__(self):
-        self.dataset = "../assets/profiles"
+        self.dataset = "assets/profiles"
         self.encodings = "encodings.pickle"
         self.detection_method = 'hog'   # for better computers use 'cnn'
 
@@ -88,7 +87,7 @@ class Recognizer:
         self.training_agent = Trainer()
 
         #experimental confidence variables
-        self.net = cv2.dnn.readNetFromCaffe("../assets/deploy.prototxt.txt", "../assets/res10_300x300_ssd_iter_140000.caffemodel")
+        self.net = cv2.dnn.readNetFromCaffe("assets/deploy.prototxt.txt", "assets/res10_300x300_ssd_iter_140000.caffemodel")
 
     def face_trigger(self, name):
         print(f"Recognized {name}")
@@ -96,6 +95,7 @@ class Recognizer:
             last_seen = get_pst()
             diff = time.time() - self.delay_cache[name]
             print(f"{name} last seen at {last_seen}")
+            lastSeenMessage = "{name} last seen at {last_seen}"
             if diff > self.delay_cache_threshold:
                 print("RESET DELAY CACHE FOR THIS NAME")
                 self.delay_cache[name] = time.time()
@@ -110,8 +110,8 @@ class Recognizer:
 
     def run(self):
         print("loading encodings + face detector...")
-        data = pickle.loads(open("encodings.pickle", "rb").read())
-        detector = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
+        data = pickle.loads(open("assets/encodings.pickle", "rb").read())
+        detector = cv2.CascadeClassifier("assets/haarcascade_frontalface_default.xml")
         print("starting video stream...")
         self.vs = VideoStream(src=0).start()
         time.sleep(2.0)
@@ -199,34 +199,22 @@ class Recognizer:
                     TRAINING = True
                     self.training_agent.encode()
 
-
-@app.route('/start_training', methods=['POST'])
-def start_training():
-    global RUN_TRAINING
-    RUN_TRAINING = True
-    return redirect(url_for('home'))
-
-
-@app.route('/upload_file', methods=['POST'])
-def upload_file():
-    if 'photo' in request.files:
-        photo = request.files['photo']
-        first_n = request.files['first_name']
-        last_n = request.files['last_name']
-        if photo.filename != '':  # and allowed_file(photo)
-            photo.save(os.path.join(('../assets/profiles/' + first_n + '_' + last_n), photo.filename))
-    return redirect(url_for('home'))
-
-
 @app.route('/', methods=['GET', 'POST'])
 def home():
     if request.method == 'POST':
         if (request.form.get('submit') == "twilio"):
-            twilioJSON("write",request.form.get('twilioAccountSID'), request.form.get('twilioAuthToken'), request.form.get('twilioFrom'), request.form.get('twilioTo'))
+            twilioJSON("write",request.form['twilioAccountSID'], request.form['twilioAuthToken'], request.form['twilioFrom'], request.form['twilioTo'])
         elif (request.form.get('submit') == "upload"):
-            print("DD")
+            photo = request.files['uploadFile']
+            profileName = request.form['firstNameField'] + '_' + request.form['lastNameField']
+            if not (os.path.isdir('assets/profiles/' + profileName + '/')):
+                os.makedirs('assets/profiles/' + profileName + '/')
+            photo.save('assets/profiles/' + profileName + '/' + photo.filename)
         elif (request.form.get('submit') == "train"):
-            print("EE")
+            #Put code here for training
+            print("The Train Button has been pressed!")
+            #global RUN_TRAINING
+            #RUN_TRAINING = True
     return render_template("index.html", seenMessage = lastSeenMessage, twilioSettings = twilioSettingsJSON)
 
 
@@ -239,7 +227,6 @@ def video_feed():
         filename = 'static/WHODAT_Title3.png'
         return send_file(filename, mimetype='image/jpg',cache_timeout=0)
 
-
 def gen():
     while True:
         (flag, encodedImage) = cv2.imencode(".jpg", outputFrame)
@@ -247,7 +234,6 @@ def gen():
             continue
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + bytearray(encodedImage) + b'\r\n')
-
 
 def twilioJSON(operation, accountSID, authToken, fromNumber, toNumber):
     global twilioSettingsJSON
@@ -276,6 +262,8 @@ def get_pst():
 #https://pythonise.com/series/learning-flask/python-before-after-request
 @app.before_first_request
 def before_first_request_func():
+    if not (os.path.exists('assets/')):
+        os.makedirs('assets/profiles/')
     if (os.path.exists("twilio.json")):
         twilioJSON("read", None, None, None, None)
 

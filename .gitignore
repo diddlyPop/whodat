@@ -3,6 +3,7 @@ t.jpg
 secret_settings.py
 app.py
 twilio.json
+profiles/
 .DS_Store
 
 # Byte-compiled / optimized / DLL files

@@ -52,33 +52,30 @@
 
             <div class="tab-content pt-2" id="pills-tabContent">
 
-                <div class="tab-pane fade show active" id="nav-configuration" role="tabpanel"
-                     aria-labelledby="nav-configuration-tab">
-
-                    <form method='POST'>
-                      <div class="form-row">
+                <div class="tab-pane fade show active" id="nav-configuration" role="tabpanel" aria-labelledby="nav-configuration-tab">
+                  <form method='POST' enctype="multipart/form-data">
+                    <div class="form-row">
+                      <div class="col-md mb-3">
+                        <label for="first_name">First Name:</label>
+                        <input type="text" class="form-control" id="firstName" name="firstNameField" required>
+                      </div>
                         <div class="col-md mb-3">
-                          <label for="first_name">First Name:</label>
-                          <input type="text" class="form-control" id="first_name" name="first_name" value={{first}}>
-                        </div>
-                          <div class="col-md mb-3">
-                          <label for="last_name">Last Name:</label>
-                          <input type="text" class="form-control" id="last_name" name="last_name" value={{last}}>
-                        </div>
+                        <label for="last_name">Last Name:</label>
+                        <input type="text" class="form-control" id="lastName" name="lastNameField" required>
                       </div>
+                    </div>
+                    <div class="custom-file mb-3">
+                      <input type="file" accept=".jpeg,.jpg,.png" class="custom-file-input" id="chosenFile" name="uploadFile">
+                      <label class="custom-file-label" for="chosenFile">Choose file</label>
+                    </div>
+                    <button type="submit" class="btn btn-secondary mb-3" name="submit" value="upload" onclick=showUploadMessage()>Upload</button>
+                  </form>
 
-                      <div class="custom-file mb-3">
-                        <input type="file" accept=".jpeg,.jpg,.png" class="custom-file-input" id="chosenFile">
-                        <label class="custom-file-label" for="inputGroupFile02">Choose file</label>
-                      </div>
-                      <button type="submit" class="btn btn-secondary mb-3" name="submit" value="upload" onclick=showUploadMessage()>Upload</button>
-                    </form>
-
-                    <p>Afer uploading the photos, use this button to start training.</p>
-                    <form method='POST'>
-                        <button type="submit" class="btn btn-secondary" name="submit" value="train" onclick="=showTrainingMessage()">Train</button>
-                    </form>
-                </div>
+                  <p>Afer uploading the photos, use this button to start training.</p>
+                  <form method='POST'>
+                      <button type="submit" class="btn btn-secondary" name="submit" value="train" onclick=showTrainingMessage()>Train</button>
+                  </form>
+              </div>
 
                 <div class="tab-pane fade" id="nav-twilio" role="tabpanel" aria-labelledby="nav-twilio-tab">
                     <p>Enter your Twilio account to receive message updates from WhoDat:</p>
@@ -86,13 +83,11 @@
                     <form method='POST'>
                         <div class="form-group">
                             <label for="twilioAccountSID">Account SID:</label>
-                            <input type="text" class="form-control" id="twilioAccountSID" name="twilioAccountSID"
-                                   value={{ twilioSettings['account_sid'] }}>
+                            <input type="text" class="form-control" id="twilioAccountSID" name="twilioAccountSID" value={{ twilioSettings['account_sid'] }}>
                         </div>
                         <div class="form-group">
                             <label for="twilioAuthToken">Auth Token:</label>
-                            <input type="text" class="form-control" id="twilioAuthToken" name="twilioAuthToken"
-                                   value={{twilioSettings['auth_token']}}>
+                            <input type="text" class="form-control" id="twilioAuthToken" name="twilioAuthToken" value={{twilioSettings['auth_token']}}>
                         </div>
                         <div class="form-group">
                             <label for="twilioFrom">From Number:</label>
@@ -131,8 +126,13 @@
       alert("File uploaded successfully")
     }
     function showTrainingMessage() {
-      alert("Training button has been clicked, CHANGE ME")
+      alert("Please wait a few minutes for the process to complete")
     }
+    //https://www.w3schools.com/bootstrap4/bootstrap_forms_custom.asp
+    $(".custom-file-input").on("change", function() {
+      var fileName = $(this).val().split("\\").pop();
+      $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+});
 </script>
 </body>
 </html>
