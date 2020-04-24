@@ -262,7 +262,7 @@ def get_pst():
 #https://pythonise.com/series/learning-flask/python-before-after-request
 @app.before_first_request
 def before_first_request_func():
-    if not (os.path.exists('assets/')):
+    if not (os.path.exists('assets/profiles')):
         os.makedirs('assets/profiles/')
     if (os.path.exists("twilio.json")):
         twilioJSON("read", None, None, None, None)
