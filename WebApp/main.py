@@ -17,6 +17,7 @@ from datetime import datetime
 from pytz import timezone
 
 app = Fl(__name__)
+app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 
 # This is a necessary step to load the var, but wait to initiate
 video_stream = None
