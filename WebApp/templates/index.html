@@ -51,9 +51,9 @@
             </nav>
 
             <div class="tab-content pt-2" id="pills-tabContent">
-
+              <strong>Create/Update a profile:</strong>
                 <div class="tab-pane fade show active" id="nav-configuration" role="tabpanel" aria-labelledby="nav-configuration-tab">
-                  <form method='POST' enctype="multipart/form-data">
+                  <form method='POST' enctype="multipart/form-data" onsubmit=showUploadMessage()>
                     <div class="form-row">
                       <div class="col-md mb-3">
                         <label for="first_name">First Name:</label>
@@ -65,15 +65,30 @@
                       </div>
                     </div>
                     <div class="custom-file mb-3">
-                      <input type="file" accept=".jpeg,.jpg,.png" class="custom-file-input" id="chosenFile" name="uploadFile">
+                      <input type="file" accept=".jpeg,.jpg,.png" class="custom-file-input" id="chosenFile" name="uploadFile" required>
                       <label class="custom-file-label" for="chosenFile">Choose file</label>
                     </div>
-                    <button type="submit" class="btn btn-secondary mb-3" name="submit" value="upload" onclick=showUploadMessage()>Upload</button>
+                    <button type="submit" class="btn btn-secondary mb-3" name="submit" value="upload">Upload</button>
                   </form>
 
-                  <p>Afer uploading the photos, use this button to start training.</p>
-                  <form method='POST'>
-                      <button type="submit" class="btn btn-secondary" name="submit" value="train" onclick=showTrainingMessage()>Train</button>
+                  <strong>Delete a profile:</strong>
+                  <form method='POST' enctype="multipart/form-data" onsubmit=showDeleteProfileMessage()>
+                    <div class="form-row">
+                      <div class="col-md mb-3">
+                        <label for="first_name">First Name:</label>
+                        <input type="text" class="form-control" id="firstName" name="firstNameField" required>
+                      </div>
+                        <div class="col-md mb-3">
+                        <label for="last_name">Last Name:</label>
+                        <input type="text" class="form-control" id="lastName" name="lastNameField" required>
+                      </div>
+                    </div>
+                    <button type="submit" class="btn btn-secondary mb-3" name="submit" value="deleteProfile">Delete Profile</button>
+                  </form>
+
+                  <strong>After uploading the photos, use this button to start training.</strong>
+                  <form method='POST' onsubmit=showTrainingMessage()>
+                      <button type="submit" class="btn btn-secondary" name="submit" value="train">Train</button>
                   </form>
               </div>
 
@@ -123,7 +138,10 @@
       alert("Twilio settings updated")
     }
     function showUploadMessage() {
-      alert("File uploaded successfully")
+      alert("File upload request sent")
+    }
+    function showDeleteProfileMessage() {
+      alert("Deleting Profile (If one exists)")
     }
     function showTrainingMessage() {
       alert("Please wait a few minutes for the process to complete")

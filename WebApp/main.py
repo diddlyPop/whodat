@@ -11,6 +11,7 @@ import threading
 import time
 import os
 import json
+import shutil
 from twilio.rest import Client as TwilioClient
 from datetime import datetime
 from pytz import timezone
@@ -45,7 +46,7 @@ outputFrame = None
 class Trainer:
     def __init__(self):
         self.dataset = "assets/profiles"
-        self.encodings = "encodings.pickle"
+        self.encodings = "assets/encodings.pickle"
         self.detection_method = 'hog'   # for better computers use 'cnn'
 
     def encode(self):
@@ -95,7 +96,7 @@ class Recognizer:
             last_seen = get_pst()
             diff = time.time() - self.delay_cache[name]
             print(f"{name} last seen at {last_seen}")
-            lastSeenMessage = "{name} last seen at {last_seen}"
+            lastSeenMessage = name + " last seen at " + last_seen
             if diff > self.delay_cache_threshold:
                 print("RESET DELAY CACHE FOR THIS NAME")
                 self.delay_cache[name] = time.time()
@@ -206,10 +207,14 @@ def home():
             twilioJSON("write",request.form['twilioAccountSID'], request.form['twilioAuthToken'], request.form['twilioFrom'], request.form['twilioTo'])
         elif (request.form.get('submit') == "upload"):
             photo = request.files['uploadFile']
-            profileName = request.form['firstNameField'] + '_' + request.form['lastNameField']
+            profileName = request.form['firstNameField'].lower() + '_' + request.form['lastNameField'].lower()
             if not (os.path.isdir('assets/profiles/' + profileName + '/')):
                 os.makedirs('assets/profiles/' + profileName + '/')
             photo.save('assets/profiles/' + profileName + '/' + photo.filename)
+        elif (request.form.get('submit') == "deleteProfile"):
+            profileName = request.form['firstNameField'].lower() + '_' + request.form['lastNameField'].lower()
+            if (os.path.isdir('assets/profiles/' + profileName + '/')):
+                shutil.rmtree('assets/profiles/' + profileName + '/')
         elif (request.form.get('submit') == "train"):
             #Put code here for training
             print("The Train Button has been pressed!")
