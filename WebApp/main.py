@@ -52,7 +52,7 @@ class Trainer:
 
     def encode(self):
         global RUN_TRAINING
-        global Training
+        global TRAINING
         print("quantifying faces...")
         imagePaths = list(paths.list_images(self.dataset))
         knownEncodings = []
@@ -75,6 +75,7 @@ class Trainer:
         f.close()
         RUN_TRAINING = False
         TRAINING = False
+        print("[INFO] Done")
 
 
 # Recognizer class handles facial recognition functionality
@@ -92,6 +93,7 @@ class Recognizer:
         self.net = cv2.dnn.readNetFromCaffe("assets/deploy.prototxt.txt", "assets/res10_300x300_ssd_iter_140000.caffemodel")
 
     def face_trigger(self, name):
+        global lastSeenMessage
         print(f"Recognized {name}")
         if name in self.delay_cache:
             last_seen = get_pst()
@@ -105,8 +107,8 @@ class Recognizer:
         else:
             self.delay_cache[name] = time.time()
             if account_sid != "":
-                self.messenger = TwilioClient(account_sid, auth_token)
-                self.messenger.messages.create(body=self.default_message + name, from_=from_number, to=to_number)
+                self.messenger = TwilioClient(twilioSettingsJSON['account_sid'], twilioSettingsJSON['auth_token'])
+                self.messenger.messages.create(body=self.default_message + name, from_=twilioSettingsJSON['from_number'], to=twilioSettingsJSON['to_number'])
             else:
                 print("Add your Twilio credentials to start sending messages")
 
@@ -219,8 +221,8 @@ def home():
         elif (request.form.get('submit') == "train"):
             #Put code here for training
             print("The Train Button has been pressed!")
-            #global RUN_TRAINING
-            #RUN_TRAINING = True
+            global RUN_TRAINING
+            RUN_TRAINING = True
     return render_template("index.html", seenMessage = lastSeenMessage, twilioSettings = twilioSettingsJSON)
 
 
