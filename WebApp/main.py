@@ -227,7 +227,7 @@ def home():
 def video_feed():
     # Global RUN_CAMERA used for determining current program state (if camera is needed)
     if RUN_CAMERA:
-        return Response(gen(), mimetype='multipart/x-mixed-replace; boundary=frame', headers='cache_control.max_age=0')
+        return Response(gen(), mimetype='multipart/x-mixed-replace; boundary=frame')
     else:
         filename = 'static/WHODAT_Title3.png'
         return send_file(filename, mimetype='image/jpg',cache_timeout=0)
