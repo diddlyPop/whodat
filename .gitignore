@@ -137,6 +137,5 @@ dmypy.json
 .pyre/
 
 # Custom
-*.txt
 *.json
 *.weights
