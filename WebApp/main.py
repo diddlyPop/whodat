@@ -14,7 +14,7 @@ import json
 import shutil
 from twilio.rest import Client as TwilioClient
 from datetime import datetime
-from pytz import timezone
+import pytz
 
 app = Fl(__name__)
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
@@ -27,6 +27,7 @@ global outputFrame
 global lock
 global RUN_CAMERA
 global RUN_TRAINING, TRAINING
+global twilioSettingsJSON
 
 # Twilio environments
 twilioSettingsJSON = None
@@ -42,6 +43,7 @@ RUN_CAMERA = True
 lock = threading.Lock()
 # current frame to be displayed
 outputFrame = None
+
 
 # Trainer class handles encoding from images
 class Trainer:
@@ -106,7 +108,7 @@ class Recognizer:
             # if time diff greater than some threshold, send message
         else:
             self.delay_cache[name] = time.time()
-            if account_sid != "":
+            if twilioSettingsJSON is not None:
                 self.messenger = TwilioClient(twilioSettingsJSON['account_sid'], twilioSettingsJSON['auth_token'])
                 self.messenger.messages.create(body=self.default_message + name, from_=twilioSettingsJSON['from_number'], to=twilioSettingsJSON['to_number'])
             else:
@@ -180,13 +182,13 @@ class Recognizer:
                                     current_faces[name] += 1
                                 else:
                                     current_faces[name] = 1
-                                if current_faces[name] == 20:
+                                if current_faces[name] == 5:
                                     self.face_trigger(name)
                                     current_faces.clear()
-                        else:
+                        if not encodings:
                             current_faces.clear()
-                    else:
-                        current_faces.clear()
+                    #else:
+                        #current_faces.clear()
                     if self.DRAW_FRAMES:
                         cv2.imshow("Frame", frame)
                         key = cv2.waitKey(1) & 0xFF
@@ -202,6 +204,7 @@ class Recognizer:
                     current_faces.clear()
                     TRAINING = True
                     self.training_agent.encode()
+
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
@@ -235,6 +238,7 @@ def video_feed():
         filename = 'static/WHODAT_Title3.png'
         return send_file(filename, mimetype='image/jpg',cache_timeout=0)
 
+
 def gen():
     while True:
         (flag, encodedImage) = cv2.imencode(".jpg", outputFrame)
@@ -242,6 +246,7 @@ def gen():
             continue
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + bytearray(encodedImage) + b'\r\n')
+
 
 def twilioJSON(operation, accountSID, authToken, fromNumber, toNumber):
     global twilioSettingsJSON
@@ -261,19 +266,22 @@ def twilioJSON(operation, accountSID, authToken, fromNumber, toNumber):
     else:
         print("Invalid operation")
 
+
 def get_pst():
     last_seen = datetime.now(tz=pytz.utc)
-    last_seen = last_seen.astimezone(timezone('US/Pacific'))
+    last_seen = last_seen.astimezone(pytz.timezone('US/Pacific'))
     last_seen = last_seen.strftime("%H:%M on %m/%d/%Y")
     return last_seen
+
 
 #https://pythonise.com/series/learning-flask/python-before-after-request
 @app.before_first_request
 def before_first_request_func():
     if not (os.path.exists('assets/profiles')):
         os.makedirs('assets/profiles/')
-    if (os.path.exists("twilio.json")):
+    if os.path.exists("twilio.json"):
         twilioJSON("read", None, None, None, None)
+
 
 if __name__ == "__main__":
     # start
