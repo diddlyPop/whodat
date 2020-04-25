@@ -111,6 +111,7 @@ class Recognizer:
             if twilioSettingsJSON is not None:
                 self.messenger = TwilioClient(twilioSettingsJSON['account_sid'], twilioSettingsJSON['auth_token'])
                 self.messenger.messages.create(body=self.default_message + name, from_=twilioSettingsJSON['from_number'], to=twilioSettingsJSON['to_number'])
+                print("Twilio SMS Sent")
             else:
                 print("Add your Twilio credentials to start sending messages")
 
@@ -213,21 +214,19 @@ def home():
             twilioJSON("write",request.form['twilioAccountSID'], request.form['twilioAuthToken'], request.form['twilioFrom'], request.form['twilioTo'])
         elif (request.form.get('submit') == "upload"):
             photo = request.files['uploadFile']
-            profileName = request.form['firstNameField'].lower() + '_' + request.form['lastNameField'].lower()
+            profileName = request.form['firstNameField'].strip().title() + '_' + request.form['lastNameField'].strip().title()
             if not (os.path.isdir('assets/profiles/' + profileName + '/')):
                 os.makedirs('assets/profiles/' + profileName + '/')
             photo.save('assets/profiles/' + profileName + '/' + photo.filename)
         elif (request.form.get('submit') == "deleteProfile"):
-            profileName = request.form['firstNameField'].lower() + '_' + request.form['lastNameField'].lower()
+            profileName = request.form['firstNameField'].strip().title() + '_' + request.form['lastNameField'].strip().title()
             if (os.path.isdir('assets/profiles/' + profileName + '/')):
                 shutil.rmtree('assets/profiles/' + profileName + '/')
         elif (request.form.get('submit') == "train"):
-            #Put code here for training
             print("The Train Button has been pressed!")
             global RUN_TRAINING
             RUN_TRAINING = True
     return render_template("index.html", seenMessage = lastSeenMessage, twilioSettings = twilioSettingsJSON)
-
 
 @app.route('/video_feed')
 def video_feed():
@@ -238,7 +237,6 @@ def video_feed():
         filename = 'static/WHODAT_Title3.png'
         return send_file(filename, mimetype='image/jpg',cache_timeout=0)
 
-
 def gen():
     while True:
         (flag, encodedImage) = cv2.imencode(".jpg", outputFrame)
@@ -247,22 +245,16 @@ def gen():
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + bytearray(encodedImage) + b'\r\n')
 
-
 def twilioJSON(operation, accountSID, authToken, fromNumber, toNumber):
     global twilioSettingsJSON
 
     if operation == "read":
-        with open('twilio.json', 'r') as twilioFile:
-            data = twilioFile.read()
-            twilioSettingsJSON = json.loads(data)
+        with open('assets/twilio.json', 'r') as twilioFile:
+            twilioSettingsJSON = json.load(twilioFile)
     elif operation == "write":
-        twilioSettingsJSON['account_sid'] = accountSID
-        twilioSettingsJSON['auth_token'] = authToken
-        twilioSettingsJSON['from_number'] = fromNumber
-        twilioSettingsJSON['to_number'] = toNumber
-        with open('twilio.json', 'w') as twilioFile:
-            json.dump({"account_sid": accountSID, "auth_token": authToken,
-                       "from_number": fromNumber, "to_number": toNumber}, twilioFile)
+        twilioSettingsJSON = {"account_sid": accountSID, "auth_token": authToken, "from_number": fromNumber, "to_number": toNumber}
+        with open('assets/twilio.json', 'w') as twilioFile:
+            json.dump(twilioSettingsJSON, twilioFile)
     else:
         print("Invalid operation")
 
@@ -273,17 +265,13 @@ def get_pst():
     last_seen = last_seen.strftime("%H:%M on %m/%d/%Y")
     return last_seen
 
-
-#https://pythonise.com/series/learning-flask/python-before-after-request
-@app.before_first_request
-def before_first_request_func():
+if __name__ == "__main__":
     if not (os.path.exists('assets/profiles')):
         os.makedirs('assets/profiles/')
-    if os.path.exists("twilio.json"):
+    if os.path.exists("assets/twilio.json"):
         twilioJSON("read", None, None, None, None)
+        print("TwilioJSON loaded")
 
-
-if __name__ == "__main__":
     # start
     if RUN_CAMERA:
         agent = Recognizer()
