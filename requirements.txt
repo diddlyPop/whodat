@@ -22,7 +22,7 @@ packaging==20.3
 Pillow==7.0.0
 pipenv==2018.11.26
 pluggy==0.13.1
-py==1.8.1
+py==1.10.0
 PyJWT==1.7.1
 pyparsing==2.4.6
 PySimpleGUI==4.15.2
