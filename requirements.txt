@@ -20,7 +20,7 @@ numpy==1.18.1
 opencv-python==4.1.2.30
 packaging==20.3
 Pillow==7.0.0
-pipenv==2018.11.26
+pipenv==2022.1.8
 pluggy==0.13.1
 py==1.8.1
 PyJWT==1.7.1
